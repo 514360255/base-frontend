@@ -13,6 +13,11 @@ import request from '@/utils/request';
 export const login = (data: object) => request.post('/account/login', data);
 
 /**
+ * 退出登录
+ */
+export const logout = () => request.post('/account/logout');
+
+/**
  * 获取用户信息
  * @param id
  */

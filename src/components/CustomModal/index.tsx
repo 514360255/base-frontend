@@ -4,8 +4,9 @@
  * @Description:
  */
 
+import { saveRole } from '@/api/permission/role';
 import { CustomModalProps } from '@/components/compontent';
-import { Button, Drawer, Form, Input, Modal, Radio, Select } from 'antd';
+import { Button, Drawer, Form, Input, message, Modal, Radio, Select } from 'antd';
 import { FormRef } from 'rc-field-form';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.less';
@@ -20,6 +21,8 @@ const CustomModal = ({
 }: CustomModalProps) => {
   const formRef: React.LegacyRef<FormRef<any>> | undefined = useRef<any>();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, messageHolder] = message.useMessage();
   const modalType: any = {
     modal: Modal,
     drawer: Drawer,
@@ -40,6 +43,24 @@ const CustomModal = ({
     return result;
   };
 
+  const submitEvent = async () => {
+    setLoading(true);
+    try {
+      const formData = await formRef.current?.validateFields();
+      if (values.id) {
+      } else {
+        await saveRole(formData);
+      }
+      setOpen(false);
+      formRef.current?.resetFields();
+      onSubmit && onSubmit(true);
+      messageApi.success('提交成功');
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  };
+
   const close = () => {
     setOpen(false);
     formRef.current?.resetFields();
@@ -50,7 +71,7 @@ const CustomModal = ({
     <Button key="cancel" size="large" onClick={close}>
       取消
     </Button>,
-    <Button key="submit" type="primary" size="large">
+    <Button key="submit" type="primary" size="large" loading={loading} onClick={submitEvent}>
       提交
     </Button>,
   ];
@@ -68,45 +89,48 @@ const CustomModal = ({
   }, [visible]);
 
   return (
-    <Component
-      width={other.width || 600}
-      footer={footer}
-      {...other}
-      open={open}
-      onClose={close}
-      className={styles.formContainer}
-    >
-      <Form size="large" layout="vertical" ref={formRef}>
-        {(columns || []).map((item) => {
-          const FieldComponent = comField[item.type || 'input'];
-          const defaultPlaceholder = `请${
-            ['input'].includes(item.type || 'input') ? '输入' : '选择'
-          }${item.title}`;
-          return (
-            <Form.Item
-              key={item.dataIndex}
-              label={`${item.title}`}
-              name={item.dataIndex}
-              rules={[
-                {
-                  required: item.required,
-                  message: defaultPlaceholder,
-                },
-                ...(item.rules || []),
-              ]}
-            >
-              <FieldComponent
-                {...(['radio', 'select'].includes(item.type as string)
-                  ? { options: handleValueEnum(item.valueEnum) }
-                  : {})}
-                placeholder={defaultPlaceholder}
-                {...(item.fieldBind || {})}
-              />
-            </Form.Item>
-          );
-        })}
-      </Form>
-    </Component>
+    <>
+      {messageHolder}
+      <Component
+        width={other.width || 600}
+        footer={footer}
+        {...other}
+        open={open}
+        onClose={close}
+        className={styles.formContainer}
+      >
+        <Form size="large" layout="vertical" ref={formRef}>
+          {(columns || []).map((item) => {
+            const FieldComponent = comField[item.type || 'input'];
+            const defaultPlaceholder = `请${
+              ['input'].includes(item.type || 'input') ? '输入' : '选择'
+            }${item.title}`;
+            return (
+              <Form.Item
+                key={item.dataIndex}
+                label={`${item.title}`}
+                name={item.dataIndex}
+                rules={[
+                  {
+                    required: item.required,
+                    message: defaultPlaceholder,
+                  },
+                  ...(item.rules || []),
+                ]}
+              >
+                <FieldComponent
+                  {...(['radio', 'select'].includes(item.type as string)
+                    ? { options: handleValueEnum(item.valueEnum) }
+                    : {})}
+                  placeholder={defaultPlaceholder}
+                  {...(item.fieldBind || {})}
+                />
+              </Form.Item>
+            );
+          })}
+        </Form>
+      </Component>
+    </>
   );
 };
 

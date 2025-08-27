@@ -16,23 +16,23 @@ export async function getInitialState(): Promise<InitialState> {
   };
   // 如果不是登录页面，执行
   const { location } = history;
+  const storeUserInfo = Local.get(USER_INFO_KEY);
   if (location.pathname !== loginPath) {
     try {
-      const storeUserInfo = Local.get(USER_INFO_KEY);
-      if (storeUserInfo && storeUserInfo.id) {
+      if (!storeUserInfo) {
+        history.push('/login');
+      } else {
         initialState.currentUser = await getUserInfoById(storeUserInfo.id);
       }
     } catch (error: any) {
       // 如果未登录
+      history.push('/login');
     }
-
-    // 模拟登录用户
-    // const mockUser: API.LoginUserVO = {
-    //   userAvatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-    //   userName: 'yupi',
-    //   userRole: 'admin',
-    // };
-    // initialState.currentUser = mockUser;
+  } else {
+    if (storeUserInfo && location.pathname === '/login') {
+      initialState.currentUser = storeUserInfo;
+      history.push('/home');
+    }
   }
   return initialState;
 }

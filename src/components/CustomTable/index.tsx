@@ -6,9 +6,10 @@
 
 import { CustomColumnProps, CustomTableProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
+import { ProFormInstance } from '@ant-design/pro-form';
 import { ProTable } from '@ant-design/pro-table';
-import { Button, Space } from 'antd';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { Button, message, Popconfirm, Space } from 'antd';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 const CustomTable = forwardRef<any, CustomTableProps>(
   // @ts-ignore
@@ -25,6 +26,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       saveText = '新增',
       isSave = true,
       dataSource = null,
+      deleteRequest,
       modalProps = {
         title: '此处是标题',
       },
@@ -34,9 +36,14 @@ const CustomTable = forwardRef<any, CustomTableProps>(
   ) => {
     const [visible, setVisible] = useState(false);
     const [values, setValues] = useState<any>({});
+    const formRef = useRef<ProFormInstance>();
+    const [messageApi, messageHolder] = message.useMessage();
 
-    const onSubmitEvent = () => {
+    const onSubmitEvent = (data?: boolean | { [key: string]: any }) => {
       setVisible(false);
+      if (data && typeof data === 'boolean') {
+        formRef.current?.submit();
+      }
     };
 
     const formEvent = async (type: 'add' | 'edit', id = undefined) => {
@@ -56,10 +63,28 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       },
     }));
 
+    const delEvent = async (id: string) => {
+      try {
+        if (deleteRequest) {
+          await deleteRequest(id);
+          messageApi.success('删除成功');
+          formRef.current?.submit();
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
     useEffect(() => {
       const operation: CustomColumnProps | undefined = columns.find(
         (item) => item.dataIndex === 'operation',
       );
+      columns.unshift({
+        title: '序号',
+        dataIndex: 'index',
+        valueType: 'index',
+        width: 70,
+      });
       if (operation) {
         if (!operation.width) {
           operation.width = 100;
@@ -67,15 +92,23 @@ const CustomTable = forwardRef<any, CustomTableProps>(
         operation.render = (_, record) => {
           return (
             <Space>
-              <Button type="link" danger>
-                删除
-              </Button>
-              <Button type="link" onClick={() => formEvent('edit', record.id)}>
-                编辑
-              </Button>
-              <Button color="default" variant="link">
-                详情
-              </Button>
+              {isDelete && (
+                <Popconfirm title="确定删除当前数据？" onConfirm={() => delEvent(record.id)}>
+                  <Button type="link" danger>
+                    删除
+                  </Button>
+                </Popconfirm>
+              )}
+              {isEdit && (
+                <Button type="link" onClick={() => formEvent('edit', record.id)}>
+                  编辑
+                </Button>
+              )}
+              {isDetail && (
+                <Button color="default" variant="link">
+                  详情
+                </Button>
+              )}
               {operation.buttons && operation.buttons(record)}
             </Space>
           );
@@ -85,11 +118,19 @@ const CustomTable = forwardRef<any, CustomTableProps>(
 
     return (
       <>
+        {messageHolder}
         <ProTable
+          bordered
+          formRef={formRef}
           columns={columns}
-          request={async (params) => {
+          request={async (params, sort, filter) => {
             if (request && !dataSource) {
-              const { list, ...data } = await request({ ...params, ...defaultQueryParams });
+              const { list, ...data } = await request({
+                ...params,
+                ...sort,
+                ...filter,
+                ...defaultQueryParams,
+              });
               return {
                 data: list,
                 ...data,

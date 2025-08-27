@@ -4,7 +4,7 @@
  * @Description:
  */
 
-import { getUserInfoById, queryUserList } from '@/api/account';
+import { deleteRole, queryRoleDataList } from '@/api/permission/role';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomTable from '@/components/CustomTable';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
@@ -19,7 +19,7 @@ const Role = () => {
     },
     {
       title: '角色CODE',
-      dataIndex: 'roleCode',
+      dataIndex: 'code',
       hideInSearch: true,
       required: true,
     },
@@ -58,8 +58,9 @@ const Role = () => {
       <CustomTable
         columns={columns}
         modalProps={modalProps}
-        request={queryUserList}
-        detailRequest={getUserInfoById}
+        request={queryRoleDataList}
+        deleteRequest={deleteRole}
+        isDetail={false}
       />
     </>
   );

@@ -5,6 +5,7 @@
  */
 import { USER_INFO_KEY } from '@/constants';
 import Local from '@/utils/store';
+import { history } from '@umijs/max';
 import { message } from 'antd';
 import axios from 'axios';
 
@@ -16,7 +17,7 @@ const request = axios.create({
 request.interceptors.request.use(
   (config: any) => {
     const userInfo: any = Local.get(USER_INFO_KEY);
-    if (userInfo.token) {
+    if (userInfo && userInfo.token) {
       config.headers.Authorization = userInfo.token;
     }
     return config;
@@ -30,8 +31,9 @@ request.interceptors.response.use(
   (response) => {
     const res = response.data;
     if (res.code !== 200 || (res?.data?.code && res?.data?.code !== 200)) {
-      if (res.code === 401) {
-        window.location.reload();
+      if (res.code === 400) {
+        history.push('/account/login');
+        Local.remove(USER_INFO_KEY);
       }
       message.error(res.message);
       return Promise.reject(new Error(res.message || '请求失败'));
@@ -40,11 +42,6 @@ request.interceptors.response.use(
   },
   (error) => {
     const data = error.response.data;
-    if (error.status === 401) {
-      window.location.reload();
-    } else {
-      return Promise.reject(error.response.data);
-    }
     return Promise.reject(error.response.data);
   },
 );

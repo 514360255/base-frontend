@@ -9,7 +9,6 @@ import React, { useState } from 'react';
 import Settings from '../../../config/defaultSettings';
 import styles from './index.less';
 
-console.log(Local);
 const Login: React.FC = (props: any) => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');

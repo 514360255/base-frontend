@@ -1,11 +1,13 @@
+import { logout } from '@/api/account';
+import { USER_INFO_KEY } from '@/constants';
+import Local from '@/utils/store';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
-import { Avatar, Button, Space } from 'antd';
+import { Avatar, Space } from 'antd';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import { flushSync } from 'react-dom';
-import { Link } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 
 export type GlobalHeaderRightProps = {
@@ -21,13 +23,15 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
     const redirect = urlParams.get('redirect');
-    // Note: There may be security issues, please note
-    if (window.location.pathname !== '/user/login' && !redirect) {
-      history.replace({
-        pathname: '/login',
-        search: stringify({
-          redirect: pathname + search,
-        }),
+    if (window.location.pathname !== '/login' && !redirect) {
+      logout().then(() => {
+        Local.remove(USER_INFO_KEY);
+        history.replace({
+          pathname: '/login',
+          search: stringify({
+            redirect: pathname + search,
+          }),
+        });
       });
     }
   };
@@ -51,34 +55,12 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
   const { currentUser } = initialState || {};
 
-  if (!currentUser) {
-    return (
-      <Link to="/user/login">
-        <Button type="primary" shape="round">
-          登录
-        </Button>
-      </Link>
-    );
-  }
-
   const menuItems = [
-    ...(menu
-      ? [
-          {
-            key: 'center',
-            icon: <UserOutlined />,
-            label: '个人中心',
-          },
-          {
-            key: 'settings',
-            icon: <SettingOutlined />,
-            label: '个人设置',
-          },
-          {
-            type: 'divider' as const,
-          },
-        ]
-      : []),
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: '个人设置',
+    },
     {
       key: 'logout',
       icon: <LogoutOutlined />,

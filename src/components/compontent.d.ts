@@ -131,7 +131,7 @@ interface CustomModalProps {
    * 提交成功后事件
    * @param data
    */
-  onSubmit?: (data?: { [key: string]: any }) => void;
+  onSubmit?: (data?: { [key: string]: any } | boolean) => void;
 
   /**
    * 关闭弹窗事件
