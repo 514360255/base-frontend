@@ -16,14 +16,13 @@ import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
-import { Button, message } from 'antd';
-import { useRef } from 'react';
+import { Button } from 'antd';
+import { useRef, useState } from 'react';
 
 const Role = () => {
   const tableRef: any = useRef();
   const modalRef: any = useRef();
-  const [messageApi, messageHolder] = message.useMessage();
-  const columns: CustomColumnProps[] = [
+  const [columns, setColumns] = useState<CustomColumnProps[]>([
     {
       title: '角色名称',
       dataIndex: 'name',
@@ -34,6 +33,9 @@ const Role = () => {
       dataIndex: 'code',
       hideInSearch: true,
       required: true,
+      fieldBind: {
+        disabled: false,
+      },
     },
     {
       title: '状态',
@@ -63,18 +65,33 @@ const Role = () => {
       buttons: (record: any) => {
         return (
           <>
-            <Button type="link" onClick={() => modalRef.current.open(record)}>
+            <Button
+              type="link"
+              onClick={() => {
+                setColumns((s: CustomColumnProps[]) => {
+                  const column: CustomColumnProps | undefined = s.find(
+                    (item) => item.dataIndex === 'code',
+                  );
+                  if (column) {
+                    column.fieldBind = {
+                      disabled: true,
+                    };
+                  }
+                  return s;
+                });
+                modalRef.current.open(record);
+              }}
+            >
               编辑
             </Button>
           </>
         );
       },
     },
-  ];
+  ]);
 
   return (
     <>
-      {messageHolder}
       <CustomTable
         ref={tableRef}
         modalTitle="角色"
