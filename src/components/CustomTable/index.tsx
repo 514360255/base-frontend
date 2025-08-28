@@ -5,84 +5,72 @@
  */
 
 import { CustomColumnProps, CustomTableProps } from '@/components/compontent';
-import CustomModal from '@/components/CustomModal';
 import { ProFormInstance } from '@ant-design/pro-form';
 import { ProTable } from '@ant-design/pro-table';
-import { Button, message, Popconfirm, Space } from 'antd';
+import { ActionType } from '@ant-design/pro-table/es/typing';
+import { Button, message, Popconfirm } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 const CustomTable = forwardRef<any, CustomTableProps>(
-  // @ts-ignore
-  (
-    {
+  (props: Omit<CustomTableProps, 'ref'>, ref) => {
+    const {
       isDelete = true,
-      isEdit = true,
-      isDetail = true,
+      isUpdateState = true,
       columns,
       rowKey,
       request,
       defaultQueryParams = {},
       toolBarRender = [],
-      saveText = '新增',
-      isSave = true,
       dataSource = null,
       deleteRequest,
-      modalProps = {
-        title: '此处是标题',
-      },
+      updateStateRequest,
       ...tableProps
-    }: CustomTableProps,
-    ref,
-  ) => {
-    const [visible, setVisible] = useState(false);
-    const [values, setValues] = useState<any>({});
+    } = props;
     const formRef = useRef<ProFormInstance>();
+    const actionRef = useRef<ActionType>();
     const [messageApi, messageHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false);
 
-    const onSubmitEvent = (data?: boolean | { [key: string]: any }) => {
-      setVisible(false);
-      if (data && typeof data === 'boolean') {
-        formRef.current?.submit();
-      }
-    };
-
-    const formEvent = async (type: 'add' | 'edit', id = undefined) => {
+    const delEvent = async (id: string) => {
+      setLoading(true);
       try {
-        setVisible(true);
-        setValues(type === 'add' ? {} : {});
+        await deleteRequest(id);
+        messageApi.success('删除成功');
+        formRef.current?.submit();
       } catch (e) {
         console.log(e);
       }
+      setLoading(false);
+    };
+
+    const updateState = async ({ id, isActive }: any) => {
+      setLoading(true);
+      try {
+        await updateStateRequest({ id, isActive: isActive === 0 ? 1 : 0 });
+        messageApi.success('状态修改成功');
+        formRef.current?.submit();
+      } catch (e) {
+        console.log(e);
+      }
+      setLoading(false);
     };
 
     useImperativeHandle(ref, () => ({
-      setValues: (data: any) => setValues(data),
-      edit(data: any) {
-        setVisible(true);
-        setValues(data);
+      reload() {
+        formRef.current?.submit();
       },
     }));
 
-    const delEvent = async (id: string) => {
-      try {
-        if (deleteRequest) {
-          await deleteRequest(id);
-          messageApi.success('删除成功');
-          formRef.current?.submit();
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
     useEffect(() => {
       const operation: CustomColumnProps | undefined = columns.find(
-        (item) => item.dataIndex === 'operation',
+        (item: CustomColumnProps) => item.dataIndex === 'operation',
       );
       columns.unshift({
         title: '序号',
         dataIndex: 'index',
         valueType: 'index',
+        hideInSearch: true,
+        hideInForm: true,
         width: 70,
       });
       if (operation) {
@@ -91,7 +79,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
         }
         operation.render = (_, record) => {
           return (
-            <Space>
+            <div style={{ display: 'flex' }}>
               {isDelete && (
                 <Popconfirm title="确定删除当前数据？" onConfirm={() => delEvent(record.id)}>
                   <Button type="link" danger>
@@ -99,18 +87,17 @@ const CustomTable = forwardRef<any, CustomTableProps>(
                   </Button>
                 </Popconfirm>
               )}
-              {isEdit && (
-                <Button type="link" onClick={() => formEvent('edit', record.id)}>
-                  编辑
-                </Button>
-              )}
-              {isDetail && (
-                <Button color="default" variant="link">
-                  详情
+              {isUpdateState && (
+                <Button
+                  type="link"
+                  danger={record.isActive === 1}
+                  onClick={() => updateState(record)}
+                >
+                  {record.isActive === 0 ? '启用' : '禁用'}
                 </Button>
               )}
               {operation.buttons && operation.buttons(record)}
-            </Space>
+            </div>
           );
         };
       }
@@ -120,21 +107,30 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       <>
         {messageHolder}
         <ProTable
+          loading={loading}
           bordered
+          actionRef={actionRef}
           formRef={formRef}
           columns={columns}
           request={async (params, sort, filter) => {
             if (request && !dataSource) {
-              const { list, ...data } = await request({
-                ...params,
-                ...sort,
-                ...filter,
-                ...defaultQueryParams,
-              });
-              return {
-                data: list,
-                ...data,
-              };
+              setLoading(true);
+              try {
+                const { list, ...data } = await request({
+                  ...params,
+                  ...sort,
+                  ...filter,
+                  ...defaultQueryParams,
+                });
+                return {
+                  data: list,
+                  ...data,
+                };
+              } catch (e) {
+                console.log(e);
+              } finally {
+                setLoading(false);
+              }
             }
             return {
               data: [],
@@ -144,22 +140,8 @@ const CustomTable = forwardRef<any, CustomTableProps>(
           rowKey={rowKey || 'id'}
           dateFormatter="string"
           {...(Array.isArray(dataSource) && dataSource.length > 0 ? { dataSource } : {})}
+          toolBarRender={() => [...(toolBarRender || [])]}
           {...tableProps}
-          toolBarRender={() => [
-            isSave && (
-              <Button type="primary" key="show" onClick={() => formEvent('add')}>
-                {saveText}
-              </Button>
-            ),
-            ...(toolBarRender || []),
-          ]}
-        />
-        <CustomModal
-          values={values || {}}
-          columns={columns.filter((item) => !item.hideInForm)}
-          visible={visible}
-          onSubmit={onSubmitEvent}
-          {...modalProps}
         />
       </>
     );

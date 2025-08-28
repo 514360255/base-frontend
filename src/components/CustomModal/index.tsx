@@ -4,134 +4,142 @@
  * @Description:
  */
 
-import { saveRole } from '@/api/permission/role';
-import { CustomModalProps } from '@/components/compontent';
+import { CustomColumnProps, CustomModalProps } from '@/components/compontent';
 import { Button, Drawer, Form, Input, message, Modal, Radio, Select } from 'antd';
 import { FormRef } from 'rc-field-form';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import styles from './index.less';
 
-const CustomModal = ({
-  type,
-  onSubmit,
-  visible,
-  columns,
-  values = {},
-  ...other
-}: CustomModalProps) => {
-  const formRef: React.LegacyRef<FormRef<any>> | undefined = useRef<any>();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [messageApi, messageHolder] = message.useMessage();
-  const modalType: any = {
-    modal: Modal,
-    drawer: Drawer,
-    detail: <></>,
-  };
-  const comField: any = {
-    input: Input,
-    radio: Radio.Group,
-    select: Select,
-  };
-  const Component = modalType[type || 'drawer'];
+const CustomModal = forwardRef<any, CustomModalProps>(
+  (props: Omit<CustomModalProps, 'ref'>, ref) => {
+    const { type, onSubmit, columns, saveRequest, updateRequest, detail, title, ...other } = props;
+    const formRef: React.LegacyRef<FormRef<any>> | undefined = useRef<any>();
+    const [values, setValues] = useState<any>({});
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [messageApi, messageHolder] = message.useMessage();
+    const [newColumns, setNewColumns] = useState<CustomColumnProps[]>(
+      (columns || []).filter((item: CustomColumnProps) => !item.hideInForm),
+    );
+    const modalType: any = {
+      modal: Modal,
+      drawer: Drawer,
+      detail: <></>,
+    };
+    const comField: any = {
+      input: Input,
+      radio: Radio.Group,
+      select: Select,
+    };
+    const Component = modalType[type || 'drawer'];
 
-  const handleValueEnum = (data: { [key: string]: any } = {}) => {
-    const result = [];
-    for (let key in data) {
-      result.push({ label: data[key]?.text || '-', value: key });
-    }
-    return result;
-  };
+    useImperativeHandle(ref, () => ({
+      async open(values: { [key: string]: any }) {
+        setOpen(true);
+        if (values && values.id && detail) {
+          const data = await detail(values.id);
+          formRef?.current?.setFieldsValue(data || {});
+          setValues(data || {});
+          return;
+        }
+        formRef?.current?.setFieldsValue(values || {});
+        setValues(values || {});
+      },
+    }));
 
-  const submitEvent = async () => {
-    setLoading(true);
-    try {
-      const formData = await formRef.current?.validateFields();
-      if (values.id) {
-      } else {
-        await saveRole(formData);
+    const handleValueEnum = (data: { [key: string]: any } = {}) => {
+      const result = [];
+      for (let key in data) {
+        const isNumber = /^\d+$/.test(key);
+        result.push({ label: data[key]?.text || '-', value: isNumber ? Number(key) : key });
       }
+      return result;
+    };
+
+    const submitEvent = async () => {
+      setLoading(true);
+      try {
+        const formData = await formRef.current?.validateFields();
+        if (values.id) {
+          updateRequest && (await updateRequest({ ...values, ...formData }));
+        } else {
+          saveRequest && (await saveRequest(formData));
+        }
+        setOpen(false);
+        formRef.current?.resetFields();
+        onSubmit && onSubmit(true);
+        messageApi.success('提交成功');
+      } catch (e) {
+        console.log(e);
+      }
+      setLoading(false);
+    };
+
+    const close = () => {
       setOpen(false);
       formRef.current?.resetFields();
-      onSubmit && onSubmit(true);
-      messageApi.success('提交成功');
-    } catch (e) {
-      console.log(e);
-    }
-    setLoading(false);
-  };
+      onSubmit && onSubmit();
+    };
 
-  const close = () => {
-    setOpen(false);
-    formRef.current?.resetFields();
-    onSubmit && onSubmit();
-  };
+    const footer = [
+      <Button key="cancel" size="large" onClick={close}>
+        取消
+      </Button>,
+      <Button key="submit" type="primary" size="large" loading={loading} onClick={submitEvent}>
+        提交
+      </Button>,
+    ];
 
-  const footer = [
-    <Button key="cancel" size="large" onClick={close}>
-      取消
-    </Button>,
-    <Button key="submit" type="primary" size="large" loading={loading} onClick={submitEvent}>
-      提交
-    </Button>,
-  ];
+    useEffect(() => {
+      setNewColumns((columns || []).filter((item: CustomColumnProps) => !item.hideInForm));
+    }, [columns]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (visible) {
-        formRef?.current?.setFieldsValue(values || {});
-      }
-    });
-  }, [values]);
+    return (
+      <>
+        {messageHolder}
+        <Component
+          width={other.width || 600}
+          footer={footer}
+          title={`${!!values.id ? '编辑' : '新增'}${title}`}
+          {...other}
+          open={open}
+          onClose={close}
+          className={styles.formContainer}
+        >
+          <Form size="large" layout="vertical" ref={formRef}>
+            {(newColumns || []).map((item) => {
+              const FieldComponent = comField[item.type || 'input'];
+              const defaultPlaceholder = `请${
+                ['input'].includes(item.type || 'input') ? '输入' : '选择'
+              }${item.title}`;
+              return (
+                <Form.Item
+                  key={item.dataIndex}
+                  label={`${item.title}`}
+                  name={item.dataIndex}
+                  rules={[
+                    {
+                      required: item.required,
+                      message: defaultPlaceholder,
+                    },
+                    ...(item.rules || []),
+                  ]}
+                >
+                  <FieldComponent
+                    {...(['radio', 'select'].includes(item.type as string)
+                      ? { options: handleValueEnum(item.valueEnum) }
+                      : {})}
+                    placeholder={defaultPlaceholder}
+                    {...(item.fieldBind || {})}
+                  />
+                </Form.Item>
+              );
+            })}
+          </Form>
+        </Component>
+      </>
+    );
+  },
+);
 
-  useEffect(() => {
-    setOpen(visible as boolean);
-  }, [visible]);
-
-  return (
-    <>
-      {messageHolder}
-      <Component
-        width={other.width || 600}
-        footer={footer}
-        {...other}
-        open={open}
-        onClose={close}
-        className={styles.formContainer}
-      >
-        <Form size="large" layout="vertical" ref={formRef}>
-          {(columns || []).map((item) => {
-            const FieldComponent = comField[item.type || 'input'];
-            const defaultPlaceholder = `请${
-              ['input'].includes(item.type || 'input') ? '输入' : '选择'
-            }${item.title}`;
-            return (
-              <Form.Item
-                key={item.dataIndex}
-                label={`${item.title}`}
-                name={item.dataIndex}
-                rules={[
-                  {
-                    required: item.required,
-                    message: defaultPlaceholder,
-                  },
-                  ...(item.rules || []),
-                ]}
-              >
-                <FieldComponent
-                  {...(['radio', 'select'].includes(item.type as string)
-                    ? { options: handleValueEnum(item.valueEnum) }
-                    : {})}
-                  placeholder={defaultPlaceholder}
-                  {...(item.fieldBind || {})}
-                />
-              </Form.Item>
-            );
-          })}
-        </Form>
-      </Component>
-    </>
-  );
-};
-
-export default React.memo(CustomModal);
+export default CustomModal;

@@ -4,13 +4,25 @@
  * @Description:
  */
 
-import { deleteRole, queryRoleDataList } from '@/api/permission/role';
+import {
+  deleteRole,
+  detailById,
+  queryRoleDataList,
+  saveRole,
+  updateRole,
+  updateRoleState,
+} from '@/api/permission/role';
 import { CustomColumnProps } from '@/components/compontent';
+import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
-import { useState } from 'react';
+import { Button, message } from 'antd';
+import { useRef } from 'react';
 
 const Role = () => {
+  const tableRef: any = useRef();
+  const modalRef: any = useRef();
+  const [messageApi, messageHolder] = message.useMessage();
   const columns: CustomColumnProps[] = [
     {
       title: '角色名称',
@@ -29,6 +41,7 @@ const Role = () => {
       valueType: 'select',
       valueEnum: ENABLE_DISABLE_Enum,
       type: 'radio',
+      required: true,
     },
     {
       title: '创建时间',
@@ -47,20 +60,42 @@ const Role = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
+      buttons: (record: any) => {
+        return (
+          <>
+            <Button type="link" onClick={() => modalRef.current.open(record)}>
+              编辑
+            </Button>
+          </>
+        );
+      },
     },
   ];
-  const [modalProps, setModalProps] = useState({
-    title: '新增角色',
-  });
 
   return (
     <>
+      {messageHolder}
       <CustomTable
+        ref={tableRef}
+        modalTitle="角色"
         columns={columns}
-        modalProps={modalProps}
         request={queryRoleDataList}
         deleteRequest={deleteRole}
-        isDetail={false}
+        updateStateRequest={updateRoleState}
+        toolBarRender={[
+          <Button type="primary" onClick={() => modalRef.current.open()}>
+            新增
+          </Button>,
+        ]}
+      />
+      <CustomModal
+        ref={modalRef}
+        title="角色"
+        saveRequest={saveRole}
+        updateRequest={updateRole}
+        detail={detailById}
+        columns={columns}
+        onSubmit={() => tableRef.current.reload()}
       />
     </>
   );

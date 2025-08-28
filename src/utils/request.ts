@@ -30,7 +30,7 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   (response) => {
     const res = response.data;
-    if (res.code !== 200 || (res?.data?.code && res?.data?.code !== 200)) {
+    if (res.code !== 200) {
       if (res.code === 400) {
         history.push('/account/login');
         Local.remove(USER_INFO_KEY);

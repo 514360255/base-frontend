@@ -43,13 +43,9 @@ interface CustomTableProps {
    */
   isDelete?: boolean;
   /**
-   * 是否有编辑按钮
+   * 是否有编辑状态按钮
    */
-  isEdit?: boolean;
-  /**
-   * 是否有详情按钮
-   */
-  isDetail?: boolean;
+  isUpdateState?: boolean;
   /**
    * 字段列表
    */
@@ -67,16 +63,16 @@ interface CustomTableProps {
   request?: (data?: any) => any;
 
   /**
-   * 详情api
-   * @param data
-   */
-  detailRequest?: (data?: any) => any;
-
-  /**
    * 删除api
    * @param data
    */
   deleteRequest?: (data?: any) => any;
+
+  /**
+   * 修改状态api
+   * @param data
+   */
+  updateStateRequest?: (data?: any) => any;
 
   /**
    * 数据源
@@ -96,21 +92,6 @@ interface CustomTableProps {
   toolBarRender?: any[];
 
   /**
-   * 新增按钮文字
-   */
-  saveText?: string;
-
-  /**
-   * 是否有新增按钮
-   */
-  isSave?: boolean;
-
-  /**
-   * 弹窗参数
-   */
-  modalProps?: CustomModalProps;
-
-  /**
    * 其它参数
    */
   [key: string]: any;
@@ -120,7 +101,7 @@ interface CustomModalProps {
   /**
    * 标题
    */
-  title?: string;
+  title?: string | undefined;
 
   /**
    * 弹窗类型
@@ -132,11 +113,6 @@ interface CustomModalProps {
    * @param data
    */
   onSubmit?: (data?: { [key: string]: any } | boolean) => void;
-
-  /**
-   * 关闭弹窗事件
-   */
-  visible?: boolean;
 
   /**
    * 宽度
@@ -152,6 +128,24 @@ interface CustomModalProps {
    * 表单默认值
    */
   values?: { [key: string]: any };
+
+  /**
+   * 保存
+   * @param data
+   */
+  saveRequest?: (data: any) => any;
+
+  /**
+   * 修改
+   * @param data
+   */
+  updateRequest?: (data: any) => any;
+
+  /**
+   * 详情
+   * @param data
+   */
+  detail?: (data: any) => any;
 
   /**
    * 其它参数

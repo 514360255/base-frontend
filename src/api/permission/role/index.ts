@@ -23,3 +23,20 @@ export const saveRole = (data: object) => request.post('/role/save', data);
  * @param id
  */
 export const deleteRole = (id: string) => request.delete(`/role/${id}`);
+
+/**
+ * 角色详情
+ * @param id
+ */
+export const detailById = (id: string) => request.get(`/role/${id}`);
+
+/**
+ * 修改状态
+ * @param data
+ */
+export const updateRoleState = (data: object) => request.post(`/role/update/state`, data);
+/**
+ * 修改橘色
+ * @param data
+ */
+export const updateRole = (data: object) => request.put(`/role`, data);
