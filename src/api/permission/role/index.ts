@@ -35,6 +35,7 @@ export const detailById = (id: string) => request.get(`/role/${id}`);
  * @param data
  */
 export const updateRoleState = (data: object) => request.post(`/role/update/state`, data);
+
 /**
  * 修改橘色
  * @param data

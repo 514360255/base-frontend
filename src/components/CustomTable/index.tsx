@@ -14,6 +14,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 const CustomTable = forwardRef<any, CustomTableProps>(
   (props: Omit<CustomTableProps, 'ref'>, ref) => {
     const {
+      isIndex = true,
       isDelete = true,
       isUpdateState = true,
       columns,
@@ -65,14 +66,16 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       const operation: CustomColumnProps | undefined = columns.find(
         (item: CustomColumnProps) => item.dataIndex === 'operation',
       );
-      columns.unshift({
-        title: '序号',
-        dataIndex: 'index',
-        valueType: 'index',
-        hideInSearch: true,
-        hideInForm: true,
-        width: 70,
-      });
+      if (isIndex) {
+        columns.unshift({
+          title: '序号',
+          dataIndex: 'index',
+          valueType: 'index',
+          hideInSearch: true,
+          hideInForm: true,
+          width: 70,
+        });
+      }
       if (operation) {
         if (!operation.width) {
           operation.width = 100;

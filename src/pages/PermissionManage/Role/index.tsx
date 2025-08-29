@@ -94,7 +94,6 @@ const Role = () => {
     <>
       <CustomTable
         ref={tableRef}
-        modalTitle="角色"
         columns={columns}
         request={queryRoleDataList}
         deleteRequest={deleteRole}

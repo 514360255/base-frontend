@@ -5,7 +5,18 @@
  */
 
 import { CustomColumnProps, CustomModalProps } from '@/components/compontent';
-import { Button, Drawer, Form, Input, message, Modal, Radio, Select } from 'antd';
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Radio,
+  Select,
+  TreeSelect,
+} from 'antd';
 import { FormRef } from 'rc-field-form';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import styles from './index.less';
@@ -30,6 +41,8 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       input: Input,
       radio: Radio.Group,
       select: Select,
+      inputNumber: InputNumber,
+      treeSelect: TreeSelect,
     };
     const Component = modalType[type || 'drawer'];
 
@@ -42,8 +55,10 @@ const CustomModal = forwardRef<any, CustomModalProps>(
           setValues(data || {});
           return;
         }
-        formRef?.current?.setFieldsValue(values || {});
-        setValues(values || {});
+        setTimeout(() => {
+          formRef?.current?.setFieldsValue(values || {});
+          setValues(values || {});
+        });
       },
     }));
 
@@ -126,6 +141,7 @@ const CustomModal = forwardRef<any, CustomModalProps>(
                   ]}
                 >
                   <FieldComponent
+                    style={{ width: '100%' }}
                     {...(['radio', 'select'].includes(item.type as string)
                       ? { options: handleValueEnum(item.valueEnum) }
                       : {})}

@@ -36,7 +36,8 @@ request.interceptors.response.use(
         Local.remove(USER_INFO_KEY);
       }
       message.error(res.message);
-      return Promise.reject(new Error(res.message || '请求失败'));
+      // new Error(res.message || '请求失败')
+      return Promise.reject();
     }
     return res.data;
   },

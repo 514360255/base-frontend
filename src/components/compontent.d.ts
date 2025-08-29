@@ -12,7 +12,7 @@ interface CustomColumnProps extends ProColumns {
   /**
    * 字段类型
    */
-  type?: 'input' | 'radio' | 'select';
+  type?: 'input' | 'radio' | 'select' | 'inputNumber' | 'treeSelect';
 
   /**
    * 是否必填
@@ -38,6 +38,10 @@ interface CustomColumnProps extends ProColumns {
 }
 
 interface CustomTableProps {
+  /**
+   * 是否有序号
+   */
+  isIndex?: boolean;
   /**
    * 是否有删除按钮
    */

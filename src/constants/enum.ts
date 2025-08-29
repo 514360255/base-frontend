@@ -8,6 +8,14 @@
  * 启用禁用
  */
 export const ENABLE_DISABLE_Enum = {
-  1: { text: '启用', status: 'success' },
   0: { text: '禁用', status: 'error' },
+  1: { text: '启用', status: 'success' },
+};
+
+/**
+ * 菜单类型
+ */
+export const MENU_TYPE_ENUM = {
+  0: { text: '按钮' },
+  1: { text: '菜单' },
 };
