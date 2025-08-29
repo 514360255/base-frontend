@@ -120,7 +120,6 @@ const Role = () => {
         );
         if (column && column.fieldBind) {
           column.fieldBind.treeData = handleTree(list);
-          console.log(handleTree(list));
         }
         return s;
       });
