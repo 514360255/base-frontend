@@ -37,7 +37,9 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       try {
         await deleteRequest(id);
         messageApi.success('删除成功');
-        formRef.current?.submit();
+        setTimeout(() => {
+          actionRef.current?.reload();
+        });
       } catch (e) {
         console.log(e);
       }

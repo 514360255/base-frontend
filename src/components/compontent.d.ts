@@ -134,6 +134,11 @@ interface CustomModalProps {
   values?: { [key: string]: any };
 
   /**
+   * 处理form数据
+   */
+  handleData?: (data: any) => any;
+
+  /**
    * 保存
    * @param data
    */

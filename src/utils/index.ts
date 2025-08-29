@@ -12,6 +12,29 @@ export const handleTree = (data: any) => {
   return data.map((item: any) => ({
     title: item.name,
     value: item.id,
-    children: Array.isArray(item.children) ? handleTree(item.children) : [],
+    ...(item.children && Array.isArray(item.children)
+      ? { children: handleTree(item.children) }
+      : {}),
   }));
+};
+
+/**
+ * 查找节点
+ * @param root
+ * @param target
+ * @param key
+ */
+export const findNode = (root: any, target: string, key: string = 'value') => {
+  if (!Array.isArray(root)) return {};
+  const stack = [...root];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (`${current[key]}` === `${target}`) return current;
+    if (Array.isArray(current.children) && current.children.length > 0) {
+      for (let i = current.children.length - 1; i >= 0; i--) {
+        stack.push(current.children[i]);
+      }
+    }
+  }
+  return {};
 };

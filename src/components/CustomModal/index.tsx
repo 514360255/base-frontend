@@ -23,7 +23,17 @@ import styles from './index.less';
 
 const CustomModal = forwardRef<any, CustomModalProps>(
   (props: Omit<CustomModalProps, 'ref'>, ref) => {
-    const { type, onSubmit, columns, saveRequest, updateRequest, detail, title, ...other } = props;
+    const {
+      type,
+      onSubmit,
+      columns,
+      saveRequest,
+      updateRequest,
+      detail,
+      handleData,
+      title,
+      ...other
+    } = props;
     const formRef: React.LegacyRef<FormRef<any>> | undefined = useRef<any>();
     const [values, setValues] = useState<any>({});
     const [open, setOpen] = useState(false);
@@ -51,6 +61,15 @@ const CustomModal = forwardRef<any, CustomModalProps>(
         setOpen(true);
         if (values && values.id && detail) {
           const data = await detail(values.id);
+          // columns?.forEach((item: any) => {
+          //   if (item.type === 'treeSelect') {
+          //     console.log(item);
+          //     if (Array.isArray(data[item.type])) {
+          //       data[item.type] = data[item.type].map((t) => ({ label: '111', value: t }));
+          //       console.log(data[item.type]);
+          //     }
+          //   }
+          // });
           formRef?.current?.setFieldsValue(data || {});
           setValues(data || {});
           return;
@@ -75,10 +94,14 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       setLoading(true);
       try {
         const formData = await formRef.current?.validateFields();
+        let data = { ...formData };
+        if (handleData) {
+          data = handleData(data);
+        }
         if (values.id) {
-          updateRequest && (await updateRequest({ ...values, ...formData }));
+          updateRequest && (await updateRequest({ ...values, ...data }));
         } else {
-          saveRequest && (await saveRequest(formData));
+          saveRequest && (await saveRequest(data));
         }
         setOpen(false);
         formRef.current?.resetFields();
