@@ -18,7 +18,7 @@ import CustomTable from '@/components/CustomTable';
 import { ENABLE_DISABLE_Enum, MENU_TYPE_ENUM } from '@/constants/enum';
 import { handleTree } from '@/utils';
 import { Button } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 const Menu = () => {
   const modalRef: any = useRef();
@@ -101,18 +101,7 @@ const Menu = () => {
             <Button
               type="link"
               onClick={() => {
-                setColumns((s: CustomColumnProps[]) => {
-                  const column: CustomColumnProps | undefined = s.find(
-                    (item) => item.dataIndex === 'code',
-                  );
-                  if (column) {
-                    column.fieldBind = {
-                      disabled: true,
-                    };
-                  }
-                  return s;
-                });
-                modalRef.current.open(record);
+                addMenu(record);
               }}
             >
               编辑
@@ -137,14 +126,10 @@ const Menu = () => {
     });
   };
 
-  const addMenu = async (record: any = {}) => {
+  const addMenu = async (record: any = null) => {
     await getData();
-    modalRef.current.open({ isActive: 1, type: 1, ...record });
+    modalRef.current.open({ isActive: 1, type: 1, ...(record || []) });
   };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   return (
     <>

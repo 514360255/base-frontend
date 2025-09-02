@@ -17,6 +17,7 @@ import {
   Select,
   TreeSelect,
 } from 'antd';
+import cloneDeep from 'lodash/cloneDeep';
 import { FormRef } from 'rc-field-form';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import styles from './index.less';
@@ -38,10 +39,9 @@ const CustomModal = forwardRef<any, CustomModalProps>(
     const [values, setValues] = useState<any>({});
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [options, setOptions] = useState<any>({});
     const [messageApi, messageHolder] = message.useMessage();
-    const [newColumns, setNewColumns] = useState<CustomColumnProps[]>(
-      (columns || []).filter((item: CustomColumnProps) => !item.hideInForm),
-    );
+    const formKey = '_form_key';
     const modalType: any = {
       modal: Modal,
       drawer: Drawer,
@@ -56,20 +56,29 @@ const CustomModal = forwardRef<any, CustomModalProps>(
     };
     const Component = modalType[type || 'drawer'];
 
+    const handleColumns = () => {
+      const newColumns: CustomColumnProps[] = (columns || []).filter(
+        (item: CustomColumnProps) => !item.hideInForm,
+      );
+      return cloneDeep(newColumns).map((item) => {
+        if (item.formKey) {
+          item.dataIndex = item.formKey;
+        }
+        return item;
+      });
+    };
+    const [newColumns, setNewColumns] = useState<CustomColumnProps[]>(handleColumns());
+
     useImperativeHandle(ref, () => ({
       async open(values: { [key: string]: any }) {
         setOpen(true);
         if (values && values.id && detail) {
           const data = await detail(values.id);
-          // columns?.forEach((item: any) => {
-          //   if (item.type === 'treeSelect') {
-          //     console.log(item);
-          //     if (Array.isArray(data[item.type])) {
-          //       data[item.type] = data[item.type].map((t) => ({ label: '111', value: t }));
-          //       console.log(data[item.type]);
-          //     }
-          //   }
-          // });
+          columns?.forEach((item: CustomColumnProps) => {
+            if (item.formKey) {
+              data[`${item.dataIndex}${formKey}`] = data[item.dataIndex];
+            }
+          });
           formRef?.current?.setFieldsValue(data || {});
           setValues(data || {});
           return;
@@ -94,14 +103,22 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       setLoading(true);
       try {
         const formData = await formRef.current?.validateFields();
-        let data = { ...formData };
+        const data = { ...values, ...formData };
+        let result: any = {};
         if (handleData) {
-          data = handleData(data);
+          result = handleData(result);
+        }
+        for (const key in data) {
+          if (new RegExp(formKey).test(key)) {
+            result[key.replace(new RegExp(formKey), '')] = data[key];
+          } else {
+            result[key] = data[key];
+          }
         }
         if (values.id) {
-          updateRequest && (await updateRequest({ ...values, ...data }));
+          updateRequest && (await updateRequest(result));
         } else {
-          saveRequest && (await saveRequest(data));
+          saveRequest && (await saveRequest(result));
         }
         setOpen(false);
         formRef.current?.resetFields();
@@ -129,8 +146,8 @@ const CustomModal = forwardRef<any, CustomModalProps>(
     ];
 
     useEffect(() => {
-      setNewColumns((columns || []).filter((item: CustomColumnProps) => !item.hideInForm));
-    }, [columns]);
+      setNewColumns(handleColumns());
+    }, [JSON.stringify(columns)]);
 
     return (
       <>

@@ -25,6 +25,36 @@ export const getUserInfoById = (id: string) => request.get(`/account/userInfo`);
 
 /**
  * 查询用户列表
+ * @param params
+ */
+export const queryUserList = (params: object) => request.get('/account/userList', { params });
+
+/**
+ * 保存账号
  * @param data
  */
-export const queryUserList = (data: object) => request.get('/account/userList', data);
+export const saveAccount = (data: object) => request.post('/account', data);
+
+/**
+ * 修改账号
+ * @param data
+ */
+export const updateAccount = (data: object) => request.put('/account', data);
+
+/**
+ * 修改状态
+ * @param data
+ */
+export const updateAccountState = (data: object) => request.post('/update/state', data);
+
+/**
+ * 删除账号
+ * @param id
+ */
+export const deleteAccount = (id: string) => request.delete(`/account/${id}`);
+
+/**
+ * 获取账号信息
+ * @param id
+ */
+export const getAccountInfoById = (id: string) => request.get(`/account/${id}`);

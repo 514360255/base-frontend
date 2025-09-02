@@ -32,6 +32,11 @@ interface CustomColumnProps extends ProColumns {
   };
 
   /**
+   * 表单字段唯一key
+   */
+  formKey?: string;
+
+  /**
    * 操作按钮
    */
   buttons?: (data: { [key: string]: any }) => ReactNode;

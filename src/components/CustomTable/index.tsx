@@ -60,7 +60,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
 
     useImperativeHandle(ref, () => ({
       reload() {
-        formRef.current?.submit();
+        actionRef.current?.reload();
       },
     }));
 
@@ -68,7 +68,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       const operation: CustomColumnProps | undefined = columns.find(
         (item: CustomColumnProps) => item.dataIndex === 'operation',
       );
-      if (isIndex) {
+      if (isIndex && Array.isArray(columns) && columns[0].dataIndex !== 'index') {
         columns.unshift({
           title: '序号',
           dataIndex: 'index',
