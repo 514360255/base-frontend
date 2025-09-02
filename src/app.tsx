@@ -1,14 +1,17 @@
 import { getUserInfoById } from '@/api/account';
+import { queryMenuList } from '@/api/permission/menu';
 import { USER_INFO_KEY } from '@/constants';
 import Local from '@/utils/store';
 import { ProBreadcrumb } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from '@umijs/max';
+import React from 'react';
 import defaultSettings from '../config/defaultSettings';
 import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
 import { requestConfig } from './requestConfig';
 
 const loginPath = '/login';
+let extraRoutes: any = [];
 
 export async function getInitialState(): Promise<InitialState> {
   const initialState: InitialState = {
@@ -35,6 +38,53 @@ export async function getInitialState(): Promise<InitialState> {
     }
   }
   return initialState;
+}
+
+export function patchClientRoutes({ routes }: any) {
+  const rootRoute = routes.find((route: any) => route.id === 'ant-design-pro-layout');
+  rootRoute.children.push(...extraRoutes);
+}
+
+const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
+  const ParentComponent = React.lazy(() => import('@/components/ParentComponent'));
+  return routes.map((item: any) => {
+    let Component = null;
+    if (!Array.isArray(item.children)) {
+      Component = React.lazy(
+        () =>
+          new Promise((resolve, reject) => {
+            import(`@/pages${item.pathname}`)
+              .then((module) => resolve(module))
+              .catch(() => import(`@/pages/404`).then((module: any) => resolve(module)));
+          }),
+      );
+    }
+    return {
+      path: item.pathname,
+      name: item.name,
+      id: item.id,
+      parentId: parentId,
+      icon: item.icon,
+      hideInMenu: item.isShow === 0,
+      ...(Component ? { element: Component && <Component /> } : {}),
+      ...(Array.isArray(item.children)
+        ? {
+            element: <ParentComponent />,
+            children: getRouteData(item.children, item.id),
+          }
+        : {}),
+    };
+  });
+};
+
+export function render(oldRender: any) {
+  const userInfo = Local.get(USER_INFO_KEY);
+  if (userInfo && userInfo.token) {
+    queryMenuList().then((data) => {
+      extraRoutes = getRouteData(data);
+      oldRender();
+    });
+  }
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout

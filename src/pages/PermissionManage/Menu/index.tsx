@@ -10,12 +10,13 @@ import {
   queryMenuPage,
   saveMenu,
   updateMenu,
+  updateMenuShow,
   updateMenuState,
 } from '@/api/permission/menu';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
-import { ENABLE_DISABLE_Enum, MENU_TYPE_ENUM } from '@/constants/enum';
+import { ENABLE_DISABLE_Enum, MENU_TYPE_ENUM, SHOW_HIDDEN_ENUM } from '@/constants/enum';
 import { handleTree } from '@/utils';
 import { Button } from 'antd';
 import { useRef, useState } from 'react';
@@ -66,6 +67,15 @@ const Menu = () => {
       required: true,
     },
     {
+      title: '是否显示',
+      dataIndex: 'isShow',
+      valueType: 'select',
+      valueEnum: SHOW_HIDDEN_ENUM,
+      hideInSearch: true,
+      type: 'radio',
+      required: true,
+    },
+    {
       title: '菜单图标',
       dataIndex: 'icon',
       hideInSearch: true,
@@ -101,9 +111,14 @@ const Menu = () => {
             <Button
               type="link"
               onClick={() => {
-                addMenu(record);
+                updateMenuShow({ id: record.id, isShow: record.isShow === 0 ? 1 : 0 }).then(() => {
+                  tableRef.current.reload();
+                });
               }}
             >
+              {record.isShow === 0 ? '显示' : '隐藏'}
+            </Button>
+            <Button type="link" onClick={() => addMenu(record)} danger={record.isShow === 1}>
               编辑
             </Button>
             <Button type="link" onClick={() => addMenu({ parentId: record.id })}>
@@ -128,7 +143,7 @@ const Menu = () => {
 
   const addMenu = async (record: any = null) => {
     await getData();
-    modalRef.current.open({ isActive: 1, type: 1, ...(record || []) });
+    modalRef.current.open({ isActive: 1, type: 1, isShow: 1, ...(record || []) });
   };
 
   return (

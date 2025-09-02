@@ -13,6 +13,14 @@ export const ENABLE_DISABLE_Enum = {
 };
 
 /**
+ * 显示隐藏
+ */
+export const SHOW_HIDDEN_ENUM = {
+  0: { text: '隐藏', status: 'error' },
+  1: { text: '显示', status: 'success' },
+};
+
+/**
  * 菜单类型
  */
 export const MENU_TYPE_ENUM = {

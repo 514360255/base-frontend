@@ -41,3 +41,14 @@ export const getDetailById = (id: number) => request.get(`/menu/${id}`);
  * @param data
  */
 export const updateMenuState = (data: object) => request.post('/menu/update/state', data);
+
+/**
+ * 修改菜单显示隐藏
+ * @param data
+ */
+export const updateMenuShow = (data: object) => request.post('/menu/update/show', data);
+
+/**
+ * 菜单查询
+ */
+export const queryMenuList = () => request.get('/menu/list');

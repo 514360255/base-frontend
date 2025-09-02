@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import Settings from '../../../config/defaultSettings';
 import styles from './index.less';
 
-const Login: React.FC = (props: any) => {
+const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const [notificationApi, contextHolder] = notification.useNotification();
