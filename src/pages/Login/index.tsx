@@ -5,7 +5,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { Helmet, history, useModel } from '@umijs/max';
 import { notification, Tabs } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Settings from '../../../config/defaultSettings';
 import styles from './index.less';
 
@@ -20,17 +20,26 @@ const Login: React.FC = () => {
       const data: any = await login(values);
       // 保存已登录用户信息
       setInitialState({ ...initialState, currentUser: data });
-      history.push('/home');
-      notificationApi.success({
-        message: '登录成功',
-        description: `欢迎回来，${data.name}！`,
-      });
       Local.set(USER_INFO_KEY, data);
+      setTimeout(() => {
+        // history.push('/home');
+        window.location.href = '/home';
+        notificationApi.success({
+          message: '登录成功',
+          description: `欢迎回来，${data.name}！`,
+        });
+      });
       return;
     } catch (error: any) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (initialState?.currentUser) {
+      history.push('/home');
+    }
+  }, []);
 
   return (
     <div className={styles.containerClassName}>

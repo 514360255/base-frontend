@@ -182,6 +182,10 @@ const CustomModal = forwardRef<any, CustomModalProps>(
                   ]}
                 >
                   <FieldComponent
+                    allowClear
+                    {...(['select', 'treeSelect'].includes(item.type as string)
+                      ? { showSearch: true, optionFilterProp: 'label' }
+                      : {})}
                     style={{ width: '100%' }}
                     {...(['radio', 'select'].includes(item.type as string)
                       ? { options: handleValueEnum(item.valueEnum) }

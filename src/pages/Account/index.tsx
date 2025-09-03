@@ -12,6 +12,7 @@ import {
   updateAccount,
   updateAccountState,
 } from '@/api/account';
+import { queryHospitalPage } from '@/api/hospital';
 import { queryRoleDataList } from '@/api/permission/role';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
@@ -29,12 +30,40 @@ const Account = () => {
       dataIndex: 'name',
       formKey: 'name_form_key',
       required: true,
+      width: 140,
+    },
+    {
+      title: '所属医院',
+      dataIndex: 'hospitalName',
+      formKey: 'hospitalId_form_key',
+      hideInSearch: true,
+      hideInForm: true,
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: '所属医院',
+      dataIndex: 'hospitalId',
+      hideInSearch: true,
+      hideInTable: true,
+      type: 'select',
+      fieldBind: {
+        options: [],
+      },
+    },
+    {
+      title: '上级姓名',
+      dataIndex: 'parentName',
+      hideInSearch: true,
+      hideInForm: true,
+      width: 140,
     },
     {
       title: '账号',
       dataIndex: 'account',
       hideInSearch: true,
       required: true,
+      width: 100,
     },
     {
       title: '密码',
@@ -70,6 +99,7 @@ const Account = () => {
       formKey: 'roleCode_form_key',
       type: 'select',
       valueEnum: {},
+      width: 100,
     },
     {
       title: '状态',
@@ -78,12 +108,14 @@ const Account = () => {
       valueEnum: ENABLE_DISABLE_Enum,
       type: 'radio',
       required: true,
+      width: 100,
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       hideInSearch: true,
       hideInForm: true,
+      width: 190,
     },
     {
       title: '创建人',
@@ -96,6 +128,7 @@ const Account = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
+      fixed: 'right',
       buttons: (record: any) => {
         return (
           <>
@@ -140,6 +173,14 @@ const Account = () => {
       }
 
       setColumns([...columns]);
+    });
+    queryHospitalPage({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
+      const column: CustomColumnProps | undefined = columns.find(
+        (item) => item.dataIndex === 'hospitalId',
+      );
+      if (column && column.fieldBind) {
+        column.fieldBind.options = list.map((item: any) => ({ label: item.name, value: item.id }));
+      }
     });
   }, []);
 

@@ -75,6 +75,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
           valueType: 'index',
           hideInSearch: true,
           hideInForm: true,
+          fixed: 'left',
           width: 70,
         });
       }
@@ -112,6 +113,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       <>
         {messageHolder}
         <ProTable
+          scroll={{ x: 'max-content' }}
           loading={loading}
           bordered
           actionRef={actionRef}

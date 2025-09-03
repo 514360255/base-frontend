@@ -45,7 +45,7 @@ export const updateAccount = (data: object) => request.put('/account', data);
  * 修改状态
  * @param data
  */
-export const updateAccountState = (data: object) => request.post('/update/state', data);
+export const updateAccountState = (data: object) => request.post('/account/update/state', data);
 
 /**
  * 删除账号
