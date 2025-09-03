@@ -1,10 +1,12 @@
 import { getUserInfoById } from '@/api/account';
 import { queryMenuList } from '@/api/permission/menu';
+import DynamicIcon from '@/components/DynamicIcon';
 import { USER_INFO_KEY } from '@/constants';
 import Local from '@/utils/store';
 import { ProBreadcrumb } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from '@umijs/max';
+import { Spin } from 'antd';
 import React from 'react';
 import defaultSettings from '../config/defaultSettings';
 import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
@@ -64,12 +66,16 @@ const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
       name: item.name,
       id: item.id,
       parentId: parentId,
-      icon: item.icon,
+      icon: <DynamicIcon iconName={item.icon} />,
       hideInMenu: item.isShow === 0,
       ...(Component ? { element: Component && <Component /> } : {}),
       ...(Array.isArray(item.children)
         ? {
-            element: <ParentComponent />,
+            element: (
+              <React.Suspense fallback={<Spin fullscreen />}>
+                <ParentComponent />
+              </React.Suspense>
+            ),
             children: getRouteData(item.children, item.id),
           }
         : {}),
@@ -95,6 +101,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       render: () => {
         return <AvatarDropdown />;
       },
+    },
+    onPageChange: () => {
+      const { location } = history;
+      // 如果没有登录，重定向到 login
+      if (!initialState?.currentUser && location.pathname !== loginPath) {
+        history.push(loginPath);
+      }
     },
     menuHeaderRender: undefined,
     headerContentRender: () => <ProBreadcrumb />,

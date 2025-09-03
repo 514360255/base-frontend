@@ -105,15 +105,15 @@ const CustomModal = forwardRef<any, CustomModalProps>(
         const formData = await formRef.current?.validateFields();
         const data = { ...values, ...formData };
         let result: any = {};
-        if (handleData) {
-          result = handleData(result);
-        }
         for (const key in data) {
           if (new RegExp(formKey).test(key)) {
             result[key.replace(new RegExp(formKey), '')] = data[key];
           } else {
             result[key] = data[key];
           }
+        }
+        if (handleData) {
+          result = handleData(result);
         }
         if (values.id) {
           updateRequest && (await updateRequest(result));

@@ -58,15 +58,6 @@ const Menu = () => {
       valueEnum: MENU_TYPE_ENUM,
     },
     {
-      title: '状态',
-      dataIndex: 'isActive',
-      valueType: 'select',
-      valueEnum: ENABLE_DISABLE_Enum,
-      hideInSearch: true,
-      type: 'radio',
-      required: true,
-    },
-    {
       title: '是否显示',
       dataIndex: 'isShow',
       valueType: 'select',
@@ -86,6 +77,15 @@ const Menu = () => {
       dataIndex: 'sortOrder',
       hideInSearch: true,
       type: 'inputNumber',
+    },
+    {
+      title: '状态',
+      dataIndex: 'isActive',
+      valueType: 'select',
+      valueEnum: ENABLE_DISABLE_Enum,
+      hideInSearch: true,
+      type: 'radio',
+      required: true,
     },
     {
       title: '创建时间',
