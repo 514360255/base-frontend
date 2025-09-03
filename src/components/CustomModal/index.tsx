@@ -53,6 +53,7 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       select: Select,
       inputNumber: InputNumber,
       treeSelect: TreeSelect,
+      textArea: Input.TextArea,
     };
     const Component = modalType[type || 'drawer'];
 

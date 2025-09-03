@@ -38,3 +38,22 @@ export const findNode = (root: any, target: string, key: string = 'value') => {
   }
   return {};
 };
+
+/**
+ * 首字母转化为大写
+ * @param string
+ */
+export const capitalizeFirstLetter = (string: string | number) => {
+  return String(string).charAt(0).toUpperCase() + String(string).slice(1);
+};
+
+/**
+ * 数组类型转化为首字母大写
+ * @param strings
+ */
+export const capitalizeFirstLetters = (strings: string[]) => {
+  if (!Array.isArray(strings)) {
+    return strings;
+  }
+  return strings.map(capitalizeFirstLetter);
+};

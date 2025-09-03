@@ -12,7 +12,7 @@ interface CustomColumnProps extends ProColumns {
   /**
    * 字段类型
    */
-  type?: 'input' | 'radio' | 'select' | 'inputNumber' | 'treeSelect';
+  type?: 'input' | 'radio' | 'select' | 'inputNumber' | 'treeSelect' | 'textArea';
 
   /**
    * 是否必填

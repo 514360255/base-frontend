@@ -2,6 +2,7 @@ import { getUserInfoById } from '@/api/account';
 import { queryMenuList } from '@/api/permission/menu';
 import DynamicIcon from '@/components/DynamicIcon';
 import { USER_INFO_KEY } from '@/constants';
+import { capitalizeFirstLetters } from '@/utils';
 import Local from '@/utils/store';
 import { ProBreadcrumb } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from '@umijs/max';
@@ -52,10 +53,11 @@ const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
   return routes.map((item: any) => {
     let Component = null;
     if (!Array.isArray(item.children)) {
+      const pathname = capitalizeFirstLetters(item.pathname.split('/'));
       Component = React.lazy(
         () =>
           new Promise((resolve, reject) => {
-            import(`@/pages${item.pathname}`)
+            import(`@/pages${pathname.join('/')}`)
               .then((module) => resolve(module))
               .catch(() => import(`@/pages/404`).then((module: any) => resolve(module)));
           }),
