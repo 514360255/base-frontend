@@ -39,7 +39,6 @@ const CustomModal = forwardRef<any, CustomModalProps>(
     const [values, setValues] = useState<any>({});
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [options, setOptions] = useState<any>({});
     const [messageApi, messageHolder] = message.useMessage();
     const formKey = '_form_key';
     const modalType: any = {
@@ -182,8 +181,10 @@ const CustomModal = forwardRef<any, CustomModalProps>(
                   ]}
                 >
                   <FieldComponent
-                    allowClear
-                    {...(['select', 'treeSelect'].includes(item.type as string)
+                    {...(['radio', 'checkbox', 'inputNumber'].includes(item.type as string)
+                      ? {}
+                      : { allowClear: true })}
+                    {...(['select'].includes(item.type as string)
                       ? { showSearch: true, optionFilterProp: 'label' }
                       : {})}
                     style={{ width: '100%' }}

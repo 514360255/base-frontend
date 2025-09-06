@@ -7,13 +7,15 @@
 /**
  * 处理菜单树
  * @param data
+ * @param title
+ * @param value
  */
-export const handleTree = (data: any) => {
+export const handleTree = (data: any, title: string = 'name', value: string = 'id') => {
   return data.map((item: any) => ({
-    title: item.name,
-    value: item.id,
+    title: item[title],
+    value: item[value],
     ...(item.children && Array.isArray(item.children)
-      ? { children: handleTree(item.children) }
+      ? { children: handleTree(item.children, title, value) }
       : {}),
   }));
 };
