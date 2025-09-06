@@ -4,6 +4,7 @@
  * @Description:
  */
 
+import { queryFirstLevelDictList } from '@/api/dict';
 import {
   deleteHospital,
   getHospitalDetailById,
@@ -17,16 +18,19 @@ import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
 import { Button } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const Hospital = () => {
   const modalRef: any = useRef();
   const tableRef: any = useRef();
+  const [departmentObj, setDepartmentObj] = useState({});
   const [columns, setColumns] = useState<CustomColumnProps[]>([
     {
       title: '医院名称',
       dataIndex: 'name',
       required: true,
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '医院CODE',
@@ -38,8 +42,12 @@ const Hospital = () => {
     {
       title: '科室',
       dataIndex: 'department',
-      hideInSearch: true,
+      formKey: 'departmentId_form_key',
       required: true,
+      hideInSearch: true,
+      valueType: 'select',
+      type: 'select',
+      valueEnum: {},
     },
     {
       title: '医院地址',
@@ -110,6 +118,25 @@ const Hospital = () => {
     });
     modalRef.current.open({ isActive: 1, type: 1, isShow: 1, ...(record || []) });
   };
+
+  useEffect(() => {
+    queryFirstLevelDictList().then((data: any) => {
+      const valueEnum: any = {};
+      data.forEach((item: any) => {
+        valueEnum[item.id] = { text: item.name };
+      });
+      setColumns((s: CustomColumnProps[]) => {
+        const column: CustomColumnProps | undefined = s.find(
+          (item) => item.dataIndex === 'department',
+        );
+        if (column) {
+          column.hideInSearch = false;
+          column.valueEnum = valueEnum;
+        }
+        return s;
+      });
+    });
+  }, []);
 
   return (
     <>

@@ -17,6 +17,11 @@ export const queryDictPage = (params: object) => request.get('/dict/page', { par
 export const queryDictList = () => request.get('/dict/list');
 
 /**
+ * 获取一级字典列表
+ */
+export const queryFirstLevelDictList = () => request.get('/dict/first/level/list');
+
+/**
  * 保存字典
  * @param data
  */
