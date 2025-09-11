@@ -1,10 +1,52 @@
 // https://umijs.org/config/
 import { defineConfig } from '@umijs/max';
+import CompressionPlugin from 'compression-webpack-plugin';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
 const { REACT_APP_ENV = 'dev' } = process.env;
+
 export default defineConfig({
+  base: '/',
+  publicPath: '/',
+  history: {
+    type: 'browser',
+  },
+  chainWebpack: (config: any) => {
+    // 修改css输出目录
+    config.plugin('mini-css-extract-plugin').tap((args: any) => [
+      {
+        ...args[0],
+        filename: `css/[name].[contenthash:8].css`,
+        chunkFilename: `css/[name].[contenthash:8].chunk.css`,
+      },
+    ]);
+
+    // 修改主包和 chunk 的 JS 输出路径
+    // config.output
+    //   .filename(`js/[name].[contenthash:8].js`)
+    //   .chunkFilename(`js/[name].[contenthash:8].js`);
+
+    // 修改image输出目录
+    // config.output.set('assetModuleFilename', `images/[name].[contenthash:8][ext]`);
+
+    //在生产环境开启gzip压缩
+    if (REACT_APP_ENV === 'prod') {
+      // Gzip压缩
+      config.plugin('compression-webpack-plugin').use(CompressionPlugin, [
+        {
+          test: /\.(js|css|html)$/i, // 匹配
+          threshold: 10240, // 超过10k的文件压缩
+          deleteOriginalAssets: false, // 不删除源文件
+        },
+      ]);
+    }
+    return config;
+  },
+  /**
+   * 移除线上的console
+   */
+  // extraBabelPlugins: [REACT_APP_ENV === 'dev' ? '' : 'transform-remove-console'],
   /**
    * @name 开启 hash 模式
    * @description 让 build 之后的产物包含 hash 后缀。通常用于增量发布和避免浏览器加载缓存。
@@ -72,7 +114,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: ' 前端万用模板',
+  title: ' 后台管理系统',
   layout: {
     locale: true,
     ...defaultSettings,
@@ -114,7 +156,7 @@ export default defineConfig({
   headScripts: [
     // 解决首次加载时白屏的问题
     {
-      src: '/scripts/loading.js',
+      src: '/loading.js',
       async: true,
     },
   ],

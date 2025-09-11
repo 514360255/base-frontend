@@ -5,7 +5,6 @@ import { USER_INFO_KEY } from '@/constants';
 import { capitalizeFirstLetters } from '@/utils';
 import Local from '@/utils/store';
 import { ProBreadcrumb } from '@ant-design/pro-layout';
-import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from '@umijs/max';
 import { Spin } from 'antd';
 import React from 'react';
@@ -93,11 +92,14 @@ export function render(oldRender: any) {
       oldRender();
     });
   }
+  if (!userInfo) {
+    oldRender();
+  }
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 // @ts-ignore
-export const layout: RunTimeLayoutConfig = ({ initialState }) => {
+export function layout({ initialState }) {
   return {
     avatarProps: {
       render: () => {
@@ -116,7 +118,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     breadcrumbRender: (routers = []) => [...routers],
     ...defaultSettings,
   };
-};
+}
 
 /**
  * @name request 配置，可以配置错误处理

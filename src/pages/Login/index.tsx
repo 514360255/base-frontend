@@ -18,17 +18,19 @@ const Login: React.FC = () => {
     try {
       // 登录
       const data: any = await login(values);
-      // 保存已登录用户信息
-      setInitialState({ ...initialState, currentUser: data });
-      Local.set(USER_INFO_KEY, data);
-      setTimeout(() => {
-        // history.push('/home');
-        window.location.href = '/home';
-        notificationApi.success({
-          message: '登录成功',
-          description: `欢迎回来，${data.name}！`,
+      if (data) {
+        // 保存已登录用户信息
+        setInitialState({ ...initialState, currentUser: data });
+        Local.set(USER_INFO_KEY, data);
+        setTimeout(() => {
+          // history.push('/home');
+          window.location.href = '/home';
+          notificationApi.success({
+            message: '登录成功',
+            description: `欢迎回来，${data.name}！`,
+          });
         });
-      });
+      }
       return;
     } catch (error: any) {
       console.log(error);

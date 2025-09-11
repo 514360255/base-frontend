@@ -9,8 +9,10 @@ import { history } from '@umijs/max';
 import { message } from 'antd';
 import axios from 'axios';
 
+const prefixApi = process.env.apiUrl || '';
+
 const request = axios.create({
-  baseURL: '/api/admin',
+  baseURL: prefixApi + '/api/admin',
   timeout: 30 * 60 * 60,
 });
 
@@ -32,7 +34,7 @@ request.interceptors.response.use(
     const res = response.data;
     if (res.code !== 200) {
       if (res.code === 400) {
-        history.push('/account/login');
+        history.push('/login');
         Local.remove(USER_INFO_KEY);
       }
       message.error(res.message);
