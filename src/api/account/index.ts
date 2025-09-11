@@ -48,6 +48,12 @@ export const updateAccount = (data: object) => request.put('/account', data);
 export const updateAccountState = (data: object) => request.post('/account/update/state', data);
 
 /**
+ * 修改密码
+ * @param data
+ */
+export const updatePassword = (data: object) => request.post('/account/update/password', data);
+
+/**
  * 删除账号
  * @param id
  */
