@@ -23,12 +23,12 @@ export default defineConfig({
     ]);
 
     // 修改主包和 chunk 的 JS 输出路径
-    // config.output
-    //   .filename(`js/[name].[contenthash:8].js`)
-    //   .chunkFilename(`js/[name].[contenthash:8].js`);
+    config.output
+      .filename(`js/[name].[contenthash:8].js`)
+      .chunkFilename(`js/[name].[contenthash:8].js`);
 
     // 修改image输出目录
-    // config.output.set('assetModuleFilename', `images/[name].[contenthash:8][ext]`);
+    // config.output.set('assetModuleFilename', `dist/images/[name].[contenthash:8][ext]`);
 
     //在生产环境开启gzip压缩
     if (REACT_APP_ENV === 'prod') {

@@ -1,10 +1,9 @@
 /*
  * @Author: 郭郭
- * @Date: 2025/9/3
+ * @Date: 2025/9/12
  * @Description:
  */
 
-import { queryFirstLevelDictList } from '@/api/dict';
 import {
   deleteHospital,
   getHospitalDetailById,
@@ -16,78 +15,33 @@ import {
 import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
-import { ENABLE_DISABLE_Enum } from '@/constants/enum';
 import { Button } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
-const Hospital = () => {
+const AppointmentDepartment = () => {
   const modalRef: any = useRef();
   const tableRef: any = useRef();
   const [columns, setColumns] = useState<CustomColumnProps[]>([
     {
-      title: '医院名称',
+      title: '科室名',
       dataIndex: 'name',
       required: true,
-      width: 200,
-      ellipsis: true,
     },
     {
-      title: '医院CODE',
-      dataIndex: 'code',
-      hideInSearch: true,
+      title: 'banner图',
+      dataIndex: 'bannerImg',
       required: true,
-      fieldBind: {},
-    },
-    {
-      title: '科室',
-      dataIndex: 'department',
-      formKey: 'departmentId_form_key',
-      required: true,
-      hideInSearch: true,
-      valueType: 'select',
-      type: 'select',
-      valueEnum: {},
-    },
-    {
-      title: 'appid',
-      dataIndex: 'appid',
-      hideInSearch: true,
       hideInTable: true,
-      required: true,
-    },
-    {
-      title: 'secret',
-      dataIndex: 'secret',
       hideInSearch: true,
-      hideInTable: true,
-      required: true,
+      type: 'upload',
     },
     {
-      title: '医院地址',
-      dataIndex: 'address',
+      title: '疾病类型',
+      dataIndex: 'diseaseType',
+      required: true,
+      hideInTable: true,
       hideInSearch: true,
-      hideInTable: true,
-      required: true,
-      type: 'textArea',
-    },
-    {
-      title: '医院简介',
-      dataIndex: 'description',
-      hideInSearch: true,
-      hideInTable: true,
-      required: true,
-      type: 'textArea',
-      fieldBind: {
-        rows: 5,
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'isActive',
-      valueType: 'select',
-      valueEnum: ENABLE_DISABLE_Enum,
-      type: 'radio',
-      required: true,
+      type: 'list',
     },
     {
       title: '创建时间',
@@ -119,6 +73,25 @@ const Hospital = () => {
     },
   ]);
 
+  const formList = {
+    diseaseType: [
+      {
+        title: '疾病名称',
+        dataIndex: 'name',
+        required: true,
+      },
+      {
+        title: 'icon',
+        dataIndex: 'icon',
+        type: 'upload',
+        required: true,
+        fieldBind: {
+          maxCount: 1,
+        },
+      },
+    ],
+  };
+
   const addHospital = async (record: any = null) => {
     setColumns((s: CustomColumnProps[]) => {
       const column: CustomColumnProps | undefined = s.find((item) => item.dataIndex === 'code');
@@ -127,29 +100,10 @@ const Hospital = () => {
           disabled: !!record,
         };
       }
-      return record ? s.filter((item) => !['appid', 'secret'].includes(item.dataIndex)) : s;
+      return s;
     });
     modalRef.current.open({ isActive: 1, type: 1, isShow: 1, ...(record || []) });
   };
-
-  useEffect(() => {
-    queryFirstLevelDictList().then((data: any) => {
-      const valueEnum: any = {};
-      data.forEach((item: any) => {
-        valueEnum[item.id] = { text: item.name };
-      });
-      setColumns((s: CustomColumnProps[]) => {
-        const column: CustomColumnProps | undefined = s.find(
-          (item) => item.dataIndex === 'department',
-        );
-        if (column) {
-          column.hideInSearch = false;
-          column.valueEnum = valueEnum;
-        }
-        return s;
-      });
-    });
-  }, []);
 
   return (
     <>
@@ -167,15 +121,16 @@ const Hospital = () => {
       />
       <CustomModal
         ref={modalRef}
-        title="医院"
+        title="科室"
         saveRequest={saveHospital}
         updateRequest={updateHospital}
         detail={getHospitalDetailById}
         columns={columns}
+        formList={formList}
         onSubmit={() => tableRef.current.reload()}
       />
     </>
   );
 };
 
-export default Hospital;
+export default AppointmentDepartment;

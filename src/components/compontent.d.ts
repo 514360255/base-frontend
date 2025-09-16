@@ -12,7 +12,15 @@ interface CustomColumnProps extends ProColumns {
   /**
    * 字段类型
    */
-  type?: 'input' | 'radio' | 'select' | 'inputNumber' | 'treeSelect' | 'textArea';
+  type?:
+    | 'input'
+    | 'radio'
+    | 'select'
+    | 'inputNumber'
+    | 'treeSelect'
+    | 'textArea'
+    | 'upload'
+    | 'list';
 
   /**
    * 是否必填
@@ -132,6 +140,13 @@ interface CustomModalProps {
    * 表单字段
    */
   columns?: CustomColumnProps[];
+
+  /**
+   * form列表
+   */
+  formList?: {
+    [key: string]: any;
+  };
 
   /**
    * 表单默认值

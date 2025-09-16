@@ -5,18 +5,9 @@
  */
 
 import { CustomColumnProps, CustomModalProps } from '@/components/compontent';
-import {
-  Button,
-  Drawer,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Radio,
-  Select,
-  TreeSelect,
-} from 'antd';
+import CustomUpload from '@/components/CustomUpload';
+import FormItem from '@/components/FormItem';
+import { Button, Drawer, Form, message, Modal } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { FormRef } from 'rc-field-form';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
@@ -33,6 +24,7 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       detail,
       handleData,
       title,
+      formList = {},
       ...other
     } = props;
     const formRef: React.LegacyRef<FormRef<any>> | undefined = useRef<any>();
@@ -46,15 +38,13 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       drawer: Drawer,
       detail: <></>,
     };
-    const comField: any = {
-      input: Input,
-      radio: Radio.Group,
-      select: Select,
-      inputNumber: InputNumber,
-      treeSelect: TreeSelect,
-      textArea: Input.TextArea,
-    };
+
     const Component = modalType[type || 'drawer'];
+    const placeholder: any = {
+      input: '输入',
+      upload: '上传',
+      default: '选择',
+    };
 
     const handleColumns = () => {
       const newColumns: CustomColumnProps[] = (columns || []).filter(
@@ -89,15 +79,6 @@ const CustomModal = forwardRef<any, CustomModalProps>(
         });
       },
     }));
-
-    const handleValueEnum = (data: { [key: string]: any } = {}) => {
-      const result = [];
-      for (let key in data) {
-        const isNumber = /^\d+$/.test(key);
-        result.push({ label: data[key]?.text || '-', value: isNumber ? Number(key) : key });
-      }
-      return result;
-    };
 
     const submitEvent = async () => {
       setLoading(true);
@@ -145,6 +126,12 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       </Button>,
     ];
 
+    const getPlaceholder = (type: string | undefined, title: any) => {
+      return `请${placeholder[(type as string) || 'input'] || placeholder.default}${
+        title ? title : ''
+      }`;
+    };
+
     useEffect(() => {
       setNewColumns(handleColumns());
     }, [JSON.stringify(columns)]);
@@ -162,38 +149,66 @@ const CustomModal = forwardRef<any, CustomModalProps>(
           className={styles.formContainer}
         >
           <Form size="large" layout="vertical" ref={formRef}>
-            {(newColumns || []).map((item) => {
-              const FieldComponent = comField[item.type || 'input'];
-              const defaultPlaceholder = `请${
-                ['input'].includes(item.type || 'input') ? '输入' : '选择'
-              }${item.title}`;
-              return (
+            {(newColumns || []).map((item: CustomColumnProps) => {
+              const defaultPlaceholder = getPlaceholder(item.type, item.title);
+              return item.type === 'list' ? (
+                <Form.List name={item.dataIndex} key={item.dataIndex}>
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, key) => {
+                        return (
+                          <Form.Item
+                            label={key === 0 ? `${item.title}` : ''}
+                            key={field.key}
+                            className={styles.dynamicItemContainer}
+                          >
+                            {(formList[item.dataIndex] || []).map((list: any) => {
+                              const placeholder = getPlaceholder(list.type, list.title);
+                              return (
+                                <Form.Item
+                                  name={[field.name, list.dataIndex]}
+                                  layout="vertical"
+                                  key={list.dataIndex}
+                                  rules={[
+                                    { required: list.required, message: placeholder },
+                                    ...(list.rules || []),
+                                  ]}
+                                >
+                                  {list.type === 'upload' ? (
+                                    <CustomUpload {...list} />
+                                  ) : (
+                                    <FormItem {...list} defaultPlaceholder={placeholder} />
+                                  )}
+                                </Form.Item>
+                              );
+                            })}
+                          </Form.Item>
+                        );
+                      })}
+                      <Form.Item>
+                        <Button type="dashed" block onClick={() => add()}>
+                          新增
+                        </Button>
+                        <Form.ErrorList errors={errors} />
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              ) : (
                 <Form.Item
                   key={item.dataIndex}
-                  label={`${item.title}`}
+                  label={item.title ? `${item.title}` : ''}
                   name={item.dataIndex}
                   rules={[
-                    {
-                      required: item.required,
-                      message: defaultPlaceholder,
-                    },
+                    { required: item.required, message: defaultPlaceholder },
                     ...(item.rules || []),
                   ]}
                 >
-                  <FieldComponent
-                    {...(['radio', 'checkbox', 'inputNumber'].includes(item.type as string)
-                      ? {}
-                      : { allowClear: true })}
-                    {...(['select'].includes(item.type as string)
-                      ? { showSearch: true, optionFilterProp: 'label' }
-                      : {})}
-                    style={{ width: '100%' }}
-                    {...(['radio', 'select'].includes(item.type as string)
-                      ? { options: handleValueEnum(item.valueEnum) }
-                      : {})}
-                    placeholder={defaultPlaceholder}
-                    {...(item.fieldBind || {})}
-                  />
+                  {item.type === 'upload' ? (
+                    <CustomUpload {...item} />
+                  ) : (
+                    <FormItem {...item} defaultPlaceholder={defaultPlaceholder} />
+                  )}
                 </Form.Item>
               );
             })}
