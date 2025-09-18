@@ -28,7 +28,7 @@ export default defineConfig({
       .chunkFilename(`js/[name].[contenthash:8].js`);
 
     // 修改image输出目录
-    // config.output.set('assetModuleFilename', `dist/images/[name].[contenthash:8][ext]`);
+    config.output.set('assetModuleFilename', `images/[name].[contenthash:8][ext]`);
 
     //在生产环境开启gzip压缩
     if (REACT_APP_ENV === 'prod') {
