@@ -5,7 +5,6 @@
  */
 import { USER_INFO_KEY } from '@/constants';
 import Local from '@/utils/store';
-import { history } from '@umijs/max';
 import { message } from 'antd';
 import axios from 'axios';
 
@@ -13,7 +12,7 @@ const prefixApi = process.env.apiUrl || '';
 
 const request = axios.create({
   baseURL: prefixApi + '/api/admin',
-  timeout: 30 * 60 * 60,
+  timeout: 30 * 60 * 60 * 1000,
 });
 
 request.interceptors.request.use(
@@ -33,8 +32,8 @@ request.interceptors.response.use(
   (response) => {
     const res = response.data;
     if (res.code !== 200) {
-      if (res.code === 400) {
-        history.push('/login');
+      if (res.code === 401) {
+        location.href = location.host + '/login';
         Local.remove(USER_INFO_KEY);
       }
       message.error(res.message);

@@ -3,7 +3,6 @@
  * @Date: 2025/9/15
  * @Description:
  */
-import { uploadImg } from '@/api/file';
 import { PlusOutlined } from '@ant-design/icons';
 import { GetProp, Image, Upload, UploadProps } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
@@ -19,7 +18,7 @@ interface CustomUploadProps {
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
-  const [fileList, setFileList] = useState<UploadFile[]>(value || []);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
 
@@ -42,21 +41,38 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
 
   // 同步 value 变化（如果父级通过 form.setFieldsValue 修改）
   useEffect(() => {
-    setFileList(value || []);
+    setFileList([]);
   }, [JSON.stringify(value)]);
 
-  const handleUploadChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    // setFileList(newFileList);
-    // console.log(newFileList);
-    // // 通知父级表单值已变化
-    // onChange?.(newFileList);
+  const customRequest = async ({ file }: any) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('biz', rest.fieldBind?.biz);
+      const request = rest.fieldBind?.request;
+      if (request) {
+        const { url, originalName, uid }: any = await request(formData);
+        const obj: UploadFile = {
+          uid: uid,
+          name: originalName,
+          status: 'done',
+          url,
+        };
+        onChange && onChange([...value, obj]);
+        setTimeout(() => {
+          setFileList([...fileList, obj]);
+        }, 200);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const customRequest = async ({ file }: any) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('biz', 'appointment_disease_type');
-    await uploadImg(formData);
+  const handleRemove = (file: UploadFile) => {
+    onChange && onChange(value.filter((item) => item.uid !== file.uid));
+    setTimeout(() => {
+      setFileList(fileList.filter((item) => item.uid !== file.uid));
+    }, 200);
   };
 
   return (
@@ -65,6 +81,7 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
         listType="picture-card"
         fileList={fileList}
         onPreview={handlePreview}
+        onRemove={handleRemove}
         customRequest={customRequest}
         {...(rest.fieldBind || {})}
       >

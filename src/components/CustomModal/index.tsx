@@ -7,6 +7,7 @@
 import { CustomColumnProps, CustomModalProps } from '@/components/compontent';
 import CustomUpload from '@/components/CustomUpload';
 import FormItem from '@/components/FormItem';
+import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Drawer, Form, message, Modal } from 'antd';
 import cloneDeep from 'lodash/cloneDeep';
 import { FormRef } from 'rc-field-form';
@@ -160,34 +161,42 @@ const CustomModal = forwardRef<any, CustomModalProps>(
                           <Form.Item
                             label={key === 0 ? `${item.title}` : ''}
                             key={field.key}
+                            rules={item.required ? [{ required: true }] : []}
                             className={styles.dynamicItemContainer}
                           >
-                            {(formList[item.dataIndex] || []).map((list: any) => {
-                              const placeholder = getPlaceholder(list.type, list.title);
-                              return (
-                                <Form.Item
-                                  name={[field.name, list.dataIndex]}
-                                  layout="vertical"
-                                  key={list.dataIndex}
-                                  rules={[
-                                    { required: list.required, message: placeholder },
-                                    ...(list.rules || []),
-                                  ]}
-                                >
-                                  {list.type === 'upload' ? (
-                                    <CustomUpload {...list} />
-                                  ) : (
-                                    <FormItem {...list} defaultPlaceholder={placeholder} />
-                                  )}
-                                </Form.Item>
-                              );
-                            })}
+                            <div className={styles.listGroupContainer}>
+                              <div className={styles.listGroupContent}>
+                                {(formList[item.dataIndex] || []).map((list: any) => {
+                                  const placeholder = getPlaceholder(list.type, list.title);
+                                  return (
+                                    <Form.Item
+                                      name={[field.name, list.dataIndex]}
+                                      layout="vertical"
+                                      key={list.dataIndex}
+                                      rules={[
+                                        { required: list.required, message: placeholder },
+                                        ...(list.rules || []),
+                                      ]}
+                                    >
+                                      {list.type === 'upload' ? (
+                                        <CustomUpload {...list} />
+                                      ) : (
+                                        <FormItem {...list} defaultPlaceholder={placeholder} />
+                                      )}
+                                    </Form.Item>
+                                  );
+                                })}
+                              </div>
+                              <span className={styles.listDelIcon}>
+                                <DeleteOutlined />
+                              </span>
+                            </div>
                           </Form.Item>
                         );
                       })}
                       <Form.Item>
                         <Button type="dashed" block onClick={() => add()}>
-                          新增
+                          {'新增' + item.title}
                         </Button>
                         <Form.ErrorList errors={errors} />
                       </Form.Item>

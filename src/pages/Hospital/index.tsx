@@ -36,7 +36,12 @@ const Hospital = () => {
       dataIndex: 'code',
       hideInSearch: true,
       required: true,
-      fieldBind: {},
+    },
+    {
+      title: '医院特色',
+      dataIndex: 'feature',
+      hideInSearch: true,
+      required: true,
     },
     {
       title: '科室',

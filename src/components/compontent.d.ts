@@ -36,6 +36,7 @@ interface CustomColumnProps extends ProColumns {
    * 表单字段绑定
    */
   fieldBind?: {
+    request?: (data: any) => any;
     [key: string]: any;
   };
 

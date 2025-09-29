@@ -9,4 +9,4 @@ import request from '@/utils/request';
  * 上传图片
  * @param data
  */
-export const uploadImg = (data: any) => request.post('/file/upload', data);
+export const uploadImg = (data: any) => request.post('/file/upload/img', data);

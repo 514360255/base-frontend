@@ -10,7 +10,6 @@ import { Spin } from 'antd';
 import React from 'react';
 import defaultSettings from '../config/defaultSettings';
 import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
-import { requestConfig } from './requestConfig';
 
 const loginPath = '/login';
 let extraRoutes: any = [];
@@ -119,10 +118,3 @@ export function layout({ initialState }) {
     ...defaultSettings,
   };
 }
-
-/**
- * @name request 配置，可以配置错误处理
- * 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
- * @doc https://umijs.org/docs/max/request#配置
- */
-export const request = requestConfig;

@@ -6,12 +6,26 @@
     }
   }
   .dynamicItemContainer{
-    :global{
-      .ant-form-item-row >.ant-form-item-control{
+    display: flex;
+    width: 100%;
+    > div {
+      width: 100%;
+      .listGroupContainer{
+        display: flex;
+        gap: 20px;
+        .listGroupContent{
+          flex: 1;
+        }
+      }
+      > div:nth-child(2) {
         background-color: #f4f4f4;
         border-radius: 4px;
-        padding: 10px;
+        padding: 10px 10px 0 10px;
       }
+    }
+    .listDelIcon{
+      color: #F5222D;
+      cursor: pointer;
     }
   }
 }
