@@ -107,7 +107,7 @@ const CustomModal = forwardRef<any, CustomModalProps>(
         onSubmit && onSubmit(true);
         messageApi.success('提交成功');
       } catch (e) {
-        console.log(e);
+        console.log(e, 'submit request error');
       }
       setLoading(false);
     };

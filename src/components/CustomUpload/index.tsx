@@ -41,7 +41,7 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
 
   // 同步 value 变化（如果父级通过 form.setFieldsValue 修改）
   useEffect(() => {
-    setFileList([]);
+    setFileList([...value]);
   }, [JSON.stringify(value)]);
 
   const customRequest = async ({ file }: any) => {

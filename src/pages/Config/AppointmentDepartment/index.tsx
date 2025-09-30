@@ -5,13 +5,12 @@
  */
 
 import {
-  deleteHospital,
-  getHospitalDetailById,
-  queryHospitalPage,
-  saveHospital,
-  updateHospital,
-  updateHospitalState,
-} from '@/api/hospital';
+  deleteDepartmentById,
+  queryDepartmentPage,
+  saveDepartment,
+  updateDepartment,
+} from '@/api/appointmentDepartment';
+import { uploadImg } from '@/api/file';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
@@ -29,15 +28,39 @@ const AppointmentDepartment = () => {
     },
     {
       title: 'banner图',
-      dataIndex: 'bannerImg',
+      dataIndex: 'bannerUrl',
       required: true,
       hideInTable: true,
       hideInSearch: true,
       type: 'upload',
+      fieldBind: {
+        request: uploadImg,
+      },
     },
     {
-      title: '疾病类型',
+      title: '问题（","分隔开）',
+      dataIndex: 'problems',
+      type: 'textArea',
+      required: true,
+      hideInTable: true,
+      hideInSearch: true,
+      fieldBind: {
+        rows: 5,
+      },
+    },
+    {
+      title: '疾病类型（","分隔开）',
       dataIndex: 'diseaseType',
+      type: 'textArea',
+      hideInTable: true,
+      hideInSearch: true,
+      fieldBind: {
+        rows: 5,
+      },
+    },
+    {
+      title: '诊疗项目',
+      dataIndex: 'diagnosisItems',
       required: true,
       hideInTable: true,
       hideInSearch: true,
@@ -64,7 +87,7 @@ const AppointmentDepartment = () => {
       buttons: (record: any) => {
         return (
           <>
-            <Button type="link" onClick={() => addHospital(record)} danger={record.isShow === 1}>
+            <Button type="link" onClick={() => addDept(record)}>
               编辑
             </Button>
           </>
@@ -73,10 +96,10 @@ const AppointmentDepartment = () => {
     },
   ]);
 
-  const formList = {
-    diseaseType: [
+  const formList: { [key: string]: CustomColumnProps[] } = {
+    diagnosisItems: [
       {
-        title: '疾病名称',
+        title: '诊疗名称',
         dataIndex: 'name',
         required: true,
       },
@@ -87,22 +110,39 @@ const AppointmentDepartment = () => {
         required: true,
         fieldBind: {
           maxCount: 1,
+          request: uploadImg,
         },
       },
     ],
   };
 
-  const addHospital = async (record: any = null) => {
-    setColumns((s: CustomColumnProps[]) => {
-      const column: CustomColumnProps | undefined = s.find((item) => item.dataIndex === 'code');
-      if (column && column.fieldBind) {
-        column.fieldBind = {
-          disabled: !!record,
-        };
-      }
-      return s;
+  const submit = async (data: any) => {
+    const { bannerUrl, diagnosisItems, ...other } = data;
+    const params = {
+      ...other,
+      bannerUrl: JSON.stringify(bannerUrl),
+      diagnosisItems: JSON.stringify(diagnosisItems),
+    };
+    if (data.id) {
+      await updateDepartment(params);
+    } else {
+      await saveDepartment(params);
+    }
+  };
+
+  const addDept = async (record: any = null) => {
+    if (record) {
+      setColumns((s) => ({
+        ...s.map((item) =>
+          item.dataIndex === 'name' ? { ...item, fieldBind: { disabled: true } } : item,
+        ),
+      }));
+    }
+    modalRef.current.open({
+      ...(record || {}),
+      bannerUrl: record?.bannerUrl ? JSON.parse(record.bannerUrl) : [],
+      diagnosisItems: record?.diagnosisItems ? JSON.parse(record.diagnosisItems) : [],
     });
-    modalRef.current.open({ isActive: 1, type: 1, isShow: 1, ...(record || []) });
   };
 
   return (
@@ -110,11 +150,11 @@ const AppointmentDepartment = () => {
       <CustomTable
         ref={tableRef}
         columns={columns}
-        request={queryHospitalPage}
-        deleteRequest={deleteHospital}
-        updateStateRequest={updateHospitalState}
+        request={queryDepartmentPage}
+        deleteRequest={deleteDepartmentById}
+        isUpdateState={false}
         toolBarRender={[
-          <Button type="primary" onClick={() => addHospital()}>
+          <Button type="primary" onClick={() => addDept()}>
             新增
           </Button>,
         ]}
@@ -122,9 +162,8 @@ const AppointmentDepartment = () => {
       <CustomModal
         ref={modalRef}
         title="科室"
-        saveRequest={saveHospital}
-        updateRequest={updateHospital}
-        detail={getHospitalDetailById}
+        saveRequest={submit}
+        updateRequest={submit}
         columns={columns}
         formList={formList}
         onSubmit={() => tableRef.current.reload()}

@@ -31,16 +31,15 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   (response) => {
     const res = response.data;
-    if (res.code !== 200) {
-      if (res.code === 401) {
-        location.href = location.host + '/login';
-        Local.remove(USER_INFO_KEY);
-      }
-      message.error(res.message);
-      // new Error(res.message || '请求失败')
-      return Promise.reject();
+    if (res.code === 200) {
+      return res.data;
     }
-    return res.data;
+    if (res.code === 401) {
+      location.href = location.host + '/login';
+      Local.remove(USER_INFO_KEY);
+    }
+    message.error(res.message);
+    return Promise.reject(new Error(res.message || '请求失败'));
   },
   (error) => {
     const data = error.response.data;
