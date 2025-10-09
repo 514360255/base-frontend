@@ -35,14 +35,18 @@ request.interceptors.response.use(
       return res.data;
     }
     if (res.code === 401) {
-      location.href = location.host + '/login';
       Local.remove(USER_INFO_KEY);
+      location.href = location.host + '/login';
     }
     message.error(res.message);
     return Promise.reject(new Error(res.message || '请求失败'));
   },
   (error) => {
     const data = error.response.data;
+    if (data.code === 401) {
+      Local.remove(USER_INFO_KEY);
+      location.href = location.host + '/login';
+    }
     return Promise.reject(error.response.data);
   },
 );

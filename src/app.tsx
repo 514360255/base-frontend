@@ -86,10 +86,12 @@ const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
 export function render(oldRender: any) {
   const userInfo = Local.get(USER_INFO_KEY);
   if (userInfo && userInfo.token) {
-    queryMenuList().then((data) => {
-      extraRoutes = getRouteData(data);
-      oldRender();
-    });
+    queryMenuList()
+      .then((data) => {
+        extraRoutes = getRouteData(data);
+        oldRender();
+      })
+      .catch((e) => console.log(e));
   }
   if (!userInfo) {
     oldRender();
