@@ -29,7 +29,6 @@ const AppointmentDepartment = () => {
     {
       title: 'banner图',
       dataIndex: 'bannerUrl',
-      required: true,
       hideInTable: true,
       hideInSearch: true,
       type: 'upload',

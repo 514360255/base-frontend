@@ -189,7 +189,7 @@ const CustomModal = forwardRef<any, CustomModalProps>(
                                 })}
                               </div>
                               <span className={styles.listDelIcon}>
-                                <DeleteOutlined />
+                                <DeleteOutlined onClick={() => remove(field.name)} />
                               </span>
                             </div>
                           </Form.Item>
