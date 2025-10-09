@@ -118,7 +118,7 @@ const Hospital = () => {
       buttons: (record: any) => {
         return (
           <>
-            <Button type="link" onClick={() => addHospital(record)} danger={record.isShow === 1}>
+            <Button type="link" onClick={() => addHospital(record)}>
               编辑
             </Button>
           </>
@@ -130,14 +130,14 @@ const Hospital = () => {
   const addHospital = async (record: any = null) => {
     setColumns((s: CustomColumnProps[]) => {
       const column: CustomColumnProps | undefined = s.find((item) => item.dataIndex === 'code');
-      if (column && column.fieldBind) {
+      if (column) {
         column.fieldBind = {
           disabled: !!record,
         };
       }
       return record ? s.filter((item) => !['appid', 'secret'].includes(item.dataIndex)) : s;
     });
-    modalRef.current.open({ isActive: 1, type: 1, isShow: 1, ...(record || []) });
+    modalRef.current.open({ isActive: 1, ...(record || {}) });
   };
 
   useEffect(() => {

@@ -41,7 +41,6 @@ const AppointmentDepartment = () => {
       title: '问题（","分隔开）',
       dataIndex: 'problems',
       type: 'textArea',
-      required: true,
       hideInTable: true,
       hideInSearch: true,
       fieldBind: {
@@ -120,8 +119,8 @@ const AppointmentDepartment = () => {
     const { bannerUrl, diagnosisItems, ...other } = data;
     const params = {
       ...other,
-      bannerUrl: JSON.stringify(bannerUrl),
-      diagnosisItems: JSON.stringify(diagnosisItems),
+      bannerUrl: bannerUrl ? JSON.stringify(bannerUrl) : [],
+      diagnosisItems: diagnosisItems ? JSON.stringify(diagnosisItems) : [],
     };
     if (data.id) {
       await updateDepartment(params);
@@ -132,11 +131,11 @@ const AppointmentDepartment = () => {
 
   const addDept = async (record: any = null) => {
     if (record) {
-      setColumns((s) => ({
+      setColumns((s) => [
         ...s.map((item) =>
           item.dataIndex === 'name' ? { ...item, fieldBind: { disabled: true } } : item,
         ),
-      }));
+      ]);
     }
     modalRef.current.open({
       ...(record || {}),

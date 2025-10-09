@@ -25,8 +25,8 @@ const FormItem = ({ value, onChange, ...rest }: FormItemProps) => {
 
   const handleValueEnum = (data: { [key: string]: any } = {}) => {
     const result = [];
+    const isNumber = isFinite(value);
     for (let key in data) {
-      const isNumber = /^\d+$/.test(key) && isFinite(key);
       result.push({ label: data[key]?.text || '-', value: isNumber ? Number(key) : key });
     }
     return result;
