@@ -53,7 +53,8 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       );
       return cloneDeep(newColumns).map((item) => {
         if (item.formKey) {
-          item.dataIndex = item.formKey;
+          const key = /_form_key$/.test(item.formKey) ? '' : formKey;
+          item.dataIndex = item.formKey + key;
         }
         return item;
       });

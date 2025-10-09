@@ -4,7 +4,7 @@
  * @Description:
  */
 
-import { queryFirstLevelDictList } from '@/api/dict';
+import { queryDepartmentPage } from '@/api/appointmentDepartment';
 import {
   deleteHospital,
   getHospitalDetailById,
@@ -45,13 +45,16 @@ const Hospital = () => {
     },
     {
       title: '科室',
-      dataIndex: 'department',
-      formKey: 'departmentId_form_key',
+      dataIndex: 'departmentNames',
+      formKey: 'departmentIds',
       required: true,
       hideInSearch: true,
       valueType: 'select',
       type: 'select',
       valueEnum: {},
+      fieldBind: {
+        mode: 'multiple',
+      },
     },
     {
       title: 'appid',
@@ -138,14 +141,14 @@ const Hospital = () => {
   };
 
   useEffect(() => {
-    queryFirstLevelDictList().then((data: any) => {
+    queryDepartmentPage({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
       const valueEnum: any = {};
-      data.forEach((item: any) => {
+      list.forEach((item: any) => {
         valueEnum[item.id] = { text: item.name };
       });
       setColumns((s: CustomColumnProps[]) => {
         const column: CustomColumnProps | undefined = s.find(
-          (item) => item.dataIndex === 'department',
+          (item) => item.dataIndex === 'departmentNames',
         );
         if (column) {
           column.hideInSearch = false;
@@ -173,9 +176,26 @@ const Hospital = () => {
       <CustomModal
         ref={modalRef}
         title="医院"
+        handleData={(data: any) => {
+          const names: string[] = [];
+          const column: any = columns.find((item) => item.dataIndex === 'departmentNames');
+          data.departmentIds.forEach((id: string) => {
+            if (column && column?.valueEnum) {
+              const { text } = column?.valueEnum[id];
+              names.push(text);
+            }
+          });
+          data.departmentIds = data.departmentIds.join(',');
+          data.departmentNames = names.join(',');
+          return data;
+        }}
         saveRequest={saveHospital}
         updateRequest={updateHospital}
-        detail={getHospitalDetailById}
+        detail={async (params: any) => {
+          const data: any = await getHospitalDetailById(params);
+          data.departmentIds_form_key = data.departmentIds.split(',');
+          return data;
+        }}
         columns={columns}
         onSubmit={() => tableRef.current.reload()}
       />

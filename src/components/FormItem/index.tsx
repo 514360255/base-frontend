@@ -5,6 +5,7 @@
  */
 import { Input, InputNumber, Radio, Select, TreeSelect } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
+import isFinite from 'lodash/isFinite';
 
 interface FormItemProps {
   value?: UploadFile[];
@@ -25,7 +26,7 @@ const FormItem = ({ value, onChange, ...rest }: FormItemProps) => {
   const handleValueEnum = (data: { [key: string]: any } = {}) => {
     const result = [];
     for (let key in data) {
-      const isNumber = /^\d+$/.test(key);
+      const isNumber = /^\d+$/.test(key) && isFinite(key);
       result.push({ label: data[key]?.text || '-', value: isNumber ? Number(key) : key });
     }
     return result;
@@ -34,7 +35,9 @@ const FormItem = ({ value, onChange, ...rest }: FormItemProps) => {
   return (
     <FieldComponent
       value={value}
-      onChange={(e: any) => onChange?.(e.target.value)}
+      onChange={(e: any) =>
+        onChange?.(['select'].includes(rest.type as string) ? e : e.target.value)
+      }
       {...(['radio', 'checkbox', 'inputNumber'].includes(rest.type as string)
         ? {}
         : { allowClear: true })}
