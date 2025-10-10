@@ -64,3 +64,8 @@ export const deleteAccount = (id: string) => request.delete(`/account/${id}`);
  * @param id
  */
 export const getAccountInfoById = (id: string) => request.get(`/account/${id}`);
+
+/**
+ * 查询管理员用户列表
+ */
+export const queryAdminUserList = () => request.get('/account/admin/user');

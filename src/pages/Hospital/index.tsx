@@ -4,6 +4,7 @@
  * @Description:
  */
 
+import { queryAdminUserList } from '@/api/account';
 import { queryDepartmentPage } from '@/api/appointmentDepartment';
 import {
   deleteHospital,
@@ -16,14 +17,29 @@ import {
 import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
+import { USER_INFO_KEY } from '@/constants';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
+import Local from '@/utils/store';
 import { Button } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 const Hospital = () => {
+  const userInfo = Local.get(USER_INFO_KEY);
+  const isAdmin = userInfo.roleCode === 'SUPER_ADMIN';
   const modalRef: any = useRef();
   const tableRef: any = useRef();
   const [columns, setColumns] = useState<CustomColumnProps[]>([
+    {
+      title: '所属人',
+      dataIndex: 'accountName',
+      formKey: 'accountId',
+      required: true,
+      hideInSearch: !isAdmin,
+      hideInForm: !isAdmin,
+      hideInTable: !isAdmin,
+      type: 'select',
+      width: 200,
+    },
     {
       title: '医院名称',
       dataIndex: 'name',
@@ -148,6 +164,23 @@ const Hospital = () => {
   };
 
   useEffect(() => {
+    if (isAdmin) {
+      queryAdminUserList().then((data: any) => {
+        const valueEnum: any = {};
+        data.forEach((item: any) => {
+          valueEnum[item.id] = { text: item.name };
+        });
+        setColumns((s: CustomColumnProps[]) => {
+          const column: CustomColumnProps | undefined = s.find(
+            (item) => item.dataIndex === 'accountName',
+          );
+          if (column) {
+            column.valueEnum = valueEnum;
+          }
+          return s;
+        });
+      });
+    }
     queryDepartmentPage({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
       const valueEnum: any = {};
       list.forEach((item: any) => {
@@ -173,6 +206,8 @@ const Hospital = () => {
         columns={columns}
         request={async (params: any) => {
           params.departmentId = params.departmentNames;
+          params.accountId = params.accountName;
+          delete params.accountName;
           delete params.departmentNames;
           return await queryHospitalPage(params);
         }}
