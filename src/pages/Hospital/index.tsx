@@ -71,6 +71,13 @@ const Hospital = () => {
       required: true,
     },
     {
+      title: '接诊时间',
+      dataIndex: 'consultationHours',
+      hideInSearch: true,
+      hideInTable: true,
+      required: true,
+    },
+    {
       title: '医院地址',
       dataIndex: 'address',
       hideInSearch: true,
@@ -164,7 +171,11 @@ const Hospital = () => {
       <CustomTable
         ref={tableRef}
         columns={columns}
-        request={queryHospitalPage}
+        request={async (params: any) => {
+          params.departmentId = params.departmentNames;
+          delete params.departmentNames;
+          return await queryHospitalPage(params);
+        }}
         deleteRequest={deleteHospital}
         updateStateRequest={updateHospitalState}
         toolBarRender={[

@@ -27,6 +27,11 @@ const AppointmentDepartment = () => {
       required: true,
     },
     {
+      title: '显示名',
+      dataIndex: 'title',
+      required: true,
+    },
+    {
       title: 'banner图',
       dataIndex: 'bannerUrl',
       hideInTable: true,
