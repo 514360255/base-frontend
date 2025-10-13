@@ -89,9 +89,21 @@ const Account = () => {
       title: '邮箱',
       dataIndex: 'email',
       hideInSearch: true,
-      required: true,
       // @ts-ignore
       rules: [{ patter: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '请输入正确邮箱' }],
+    },
+    {
+      title: '收件人',
+      dataIndex: 'recipient',
+      tooltip: '多个邮箱用";"分隔开',
+      width: 100,
+      ellipsis: true,
+      hideInSearch: true,
+      required: true,
+      type: 'textArea',
+      fieldBind: {
+        rows: 3,
+      },
     },
     {
       title: '角色',

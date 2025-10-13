@@ -73,6 +73,12 @@ const Hospital = () => {
       },
     },
     {
+      title: '授权次数',
+      dataIndex: 'authNumber',
+      hideInSearch: true,
+      hideInForm: true,
+    },
+    {
       title: 'appid',
       dataIndex: 'appid',
       hideInSearch: true,
@@ -240,6 +246,7 @@ const Hospital = () => {
         detail={async (params: any) => {
           const data: any = await getHospitalDetailById(params);
           data.departmentIds_form_key = data.departmentIds.split(',');
+          data.accountId_form_key = data.accountId;
           return data;
         }}
         columns={columns}

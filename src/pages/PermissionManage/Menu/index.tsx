@@ -118,7 +118,7 @@ const Menu = () => {
             >
               {record.isShow === 0 ? '显示' : '隐藏'}
             </Button>
-            <Button type="link" onClick={() => addMenu(record)} danger={record.isShow === 1}>
+            <Button type="link" onClick={() => addMenu(record)}>
               编辑
             </Button>
             <Button type="link" onClick={() => addMenu({ parentId: record.id })}>
