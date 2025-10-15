@@ -5,6 +5,7 @@
  */
 import { PlusOutlined } from '@ant-design/icons';
 import { GetProp, Image, Upload, UploadProps } from 'antd';
+import ImgCrop, { ImgCropProps } from 'antd-img-crop';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useEffect, useState } from 'react';
 
@@ -12,6 +13,8 @@ interface CustomUploadProps {
   value?: UploadFile[];
   onChange?: (fileList: UploadFile[]) => void;
   uploadProps?: Omit<UploadProps, 'fileList' | 'onChange'>;
+  imgCrop?: ImgCropProps;
+  isCrop?: boolean;
   [key: string]: any;
 }
 
@@ -45,6 +48,7 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
   }, [JSON.stringify(value)]);
 
   const customRequest = async ({ file }: any) => {
+    if (!file) return;
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -77,19 +81,43 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
 
   return (
     <>
-      <Upload
-        listType="picture-card"
-        fileList={fileList}
-        onPreview={handlePreview}
-        onRemove={handleRemove}
-        customRequest={customRequest}
-        {...(rest.fieldBind || {})}
-      >
-        <button style={{ border: 0, background: 'none' }} type="button">
-          <PlusOutlined />
-          <div style={{ marginTop: 8 }}>点击上传</div>
-        </button>
-      </Upload>
+      {rest?.fieldBind?.isCrop ? (
+        <ImgCrop
+          rotationSlider
+          showReset
+          {...(rest?.fieldBind?.imgCrop || {})}
+          onModalOk={customRequest}
+        >
+          <Upload
+            listType="picture-card"
+            fileList={fileList}
+            onPreview={handlePreview}
+            onRemove={handleRemove}
+            customRequest={customRequest}
+            {...(rest.fieldBind || {})}
+          >
+            <button style={{ border: 0, background: 'none' }} type="button">
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>点击上传</div>
+            </button>
+          </Upload>
+        </ImgCrop>
+      ) : (
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onRemove={handleRemove}
+          customRequest={customRequest}
+          {...(rest.fieldBind || {})}
+        >
+          <button style={{ border: 0, background: 'none' }} type="button">
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>点击上传</div>
+          </button>
+        </Upload>
+      )}
+
       {previewImage && (
         <Image
           wrapperStyle={{ display: 'none' }}

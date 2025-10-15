@@ -6,6 +6,7 @@
 
 import { queryAdminUserList } from '@/api/account';
 import { queryDepartmentPage } from '@/api/appointmentDepartment';
+import { uploadImg } from '@/api/file';
 import {
   deleteHospital,
   getHospitalDetailById,
@@ -52,6 +53,37 @@ const Hospital = () => {
       dataIndex: 'code',
       hideInSearch: true,
       required: true,
+    },
+    {
+      title: '医院主图',
+      dataIndex: 'introPic',
+      hideInTable: true,
+      hideInSearch: true,
+      type: 'upload',
+      required: true,
+      fieldBind: {
+        maxCount: 1,
+        request: uploadImg,
+        isCrop: true,
+        imgCrop: {
+          aspect: 217 / 217,
+        },
+      },
+    },
+    {
+      title: '医院环境',
+      dataIndex: 'envPic',
+      hideInTable: true,
+      hideInSearch: true,
+      type: 'upload',
+      required: true,
+      fieldBind: {
+        request: uploadImg,
+        isCrop: true,
+        imgCrop: {
+          aspect: 16 / 9,
+        },
+      },
     },
     {
       title: '医院特色',
@@ -105,7 +137,6 @@ const Hospital = () => {
       hideInSearch: true,
       hideInTable: true,
       required: true,
-      type: 'textArea',
     },
     {
       title: '医院简介',
@@ -167,6 +198,20 @@ const Hospital = () => {
       return record ? s.filter((item) => !['appid', 'secret'].includes(item.dataIndex)) : s;
     });
     modalRef.current.open({ isActive: 1, ...(record || {}) });
+  };
+
+  const submit = async (data: any) => {
+    const { envPic, introPic, ...other } = data;
+    const params = {
+      ...other,
+      envPic: envPic ? JSON.stringify(envPic) : [],
+      introPic: introPic ? JSON.stringify(introPic) : [],
+    };
+    if (data.id) {
+      await updateHospital(params);
+    } else {
+      await saveHospital(params);
+    }
   };
 
   useEffect(() => {
@@ -241,12 +286,14 @@ const Hospital = () => {
           data.departmentNames = names.join(',');
           return data;
         }}
-        saveRequest={saveHospital}
-        updateRequest={updateHospital}
+        saveRequest={submit}
+        updateRequest={submit}
         detail={async (params: any) => {
           const data: any = await getHospitalDetailById(params);
           data.departmentIds_form_key = data.departmentIds.split(',');
           data.accountId_form_key = data.accountId;
+          data.envPic = JSON.parse(data.envPic || '[]');
+          data.introPic = JSON.parse(data.introPic || '[]');
           return data;
         }}
         columns={columns}

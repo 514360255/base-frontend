@@ -6,6 +6,7 @@
 
 import { ProColumns } from '@ant-design/pro-table';
 import { Rules } from '@rc-component/async-validator';
+import { ImgCropProps } from 'antd-img-crop';
 import { ReactNode } from 'react';
 
 interface CustomColumnProps extends ProColumns {
@@ -36,7 +37,26 @@ interface CustomColumnProps extends ProColumns {
    * 表单字段绑定
    */
   fieldBind?: {
+    /**
+     * 请求
+     * @param data
+     */
     request?: (data: any) => any;
+
+    /**
+     * 裁切图片参数
+     */
+    imgCrop?:
+      | ImgCropProps
+      | {
+          aspect?: any;
+        };
+
+    /**
+     * 是否裁切图片
+     */
+    isCrop?: boolean;
+
     [key: string]: any;
   };
 
