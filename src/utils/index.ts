@@ -4,6 +4,8 @@
  * @Description:
  */
 
+import { CustomColumnProps } from '@/components/compontent';
+
 /**
  * 处理菜单树
  * @param data
@@ -58,4 +60,32 @@ export const capitalizeFirstLetters = (strings: string[]) => {
     return strings;
   }
   return strings.map(capitalizeFirstLetter);
+};
+
+/**
+ * 转换成枚举结构
+ * @param dataSource
+ * @param data
+ * @param dataIndex
+ * @param key
+ * @param value
+ */
+export const transformValueEnum = (
+  dataSource: any[],
+  data: any,
+  dataIndex: string,
+  key: string = 'id',
+  value: string = 'name',
+) => {
+  const column: CustomColumnProps | undefined = dataSource.find(
+    (item) => item.dataIndex === dataIndex,
+  );
+  const valueEnum: any = {};
+  data.forEach((item: any) => {
+    valueEnum[item.id] = { text: item.name };
+  });
+  if (column) {
+    column.valueEnum = valueEnum;
+  }
+  return dataSource;
 };
