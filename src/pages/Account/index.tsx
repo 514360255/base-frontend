@@ -170,7 +170,7 @@ const Account = () => {
   };
 
   useEffect(() => {
-    queryRoleDataList({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
+    queryRoleDataList({ pageSizeZero: true, pageSize: 0 }).then(({ list }: any) => {
       const column: CustomColumnProps | undefined = columns.find(
         (item) => item.dataIndex === 'roleCode',
       );
@@ -186,7 +186,7 @@ const Account = () => {
 
       setColumns([...columns]);
     });
-    queryHospitalPage({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
+    queryHospitalPage({ pageSizeZero: true, pageSize: 0 }).then(({ list }: any) => {
       const column: CustomColumnProps | undefined = columns.find(
         (item) => item.dataIndex === 'hospitalId',
       );

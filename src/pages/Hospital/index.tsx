@@ -20,6 +20,7 @@ import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
+import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
 import { Button } from 'antd';
 import { useEffect, useRef, useState } from 'react';
@@ -217,22 +218,10 @@ const Hospital = () => {
   useEffect(() => {
     if (isAdmin) {
       queryAdminUserList().then((data: any) => {
-        const valueEnum: any = {};
-        data.forEach((item: any) => {
-          valueEnum[item.id] = { text: item.name };
-        });
-        setColumns((s: CustomColumnProps[]) => {
-          const column: CustomColumnProps | undefined = s.find(
-            (item) => item.dataIndex === 'accountName',
-          );
-          if (column) {
-            column.valueEnum = valueEnum;
-          }
-          return s;
-        });
+        setColumns(transformValueEnum(columns, data, 'accountName'));
       });
     }
-    queryDepartmentPage({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
+    queryDepartmentPage({ pageSizeZero: true, pageSize: 0 }).then(({ list }: any) => {
       const valueEnum: any = {};
       list.forEach((item: any) => {
         valueEnum[item.id] = { text: item.name };

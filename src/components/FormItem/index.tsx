@@ -36,7 +36,13 @@ const FormItem = ({ value, onChange, ...rest }: FormItemProps) => {
     <FieldComponent
       value={value}
       onChange={(e: any) =>
-        onChange?.(['treeSelect', 'select'].includes(rest.type as string) ? e : e.target.value)
+        onChange?.(
+          ['treeSelect', 'select'].includes(rest.type as string)
+            ? e
+            : !rest.type || ['input', 'inputNumber'].includes(rest.type as string)
+            ? e
+            : e.target.value,
+        )
       }
       {...(['radio', 'checkbox', 'inputNumber'].includes(rest.type as string)
         ? {}

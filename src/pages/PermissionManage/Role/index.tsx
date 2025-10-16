@@ -113,7 +113,7 @@ const Role = () => {
   };
 
   useEffect(() => {
-    queryMenuPage({ pageSizeZero: true, pagSize: 0 }).then(({ list }: any) => {
+    queryMenuPage({ pageSizeZero: true, pageSize: 0 }).then(({ list }: any) => {
       setColumns((s: CustomColumnProps[]) => {
         const column: CustomColumnProps | undefined = s.find(
           (item) => item.dataIndex === 'menuIds',

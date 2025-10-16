@@ -131,7 +131,7 @@ const Menu = () => {
   ]);
 
   const getData = async () => {
-    const { list }: any = await queryMenuPage({ pageSizeZero: true, pagSize: 0 });
+    const { list }: any = await queryMenuPage({ pageSizeZero: true, pageSize: 0 });
     setColumns((s: CustomColumnProps[]) => {
       const column: CustomColumnProps | undefined = s.find((item) => item.dataIndex === 'parentId');
       if (column && column.fieldBind) {
@@ -153,7 +153,7 @@ const Menu = () => {
         isIndex={false}
         ref={tableRef}
         columns={columns}
-        defaultQueryParams={{ pageSizeZero: true, pagSize: 0 }}
+        defaultQueryParams={{ pageSizeZero: true, pageSize: 0 }}
         request={queryMenuPage}
         deleteRequest={delMenu}
         updateStateRequest={updateMenuState}

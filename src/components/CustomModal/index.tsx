@@ -150,7 +150,7 @@ const CustomModal = forwardRef<any, CustomModalProps>(
           onClose={close}
           className={styles.formContainer}
         >
-          <Form size="large" layout="vertical" ref={formRef}>
+          <Form size="large" layout="vertical" autoComplete="off" ref={formRef}>
             {(newColumns || []).map((item: CustomColumnProps) => {
               const defaultPlaceholder = getPlaceholder(item.type, item.title);
               return item.type === 'list' ? (
@@ -172,8 +172,9 @@ const CustomModal = forwardRef<any, CustomModalProps>(
                                   return (
                                     <Form.Item
                                       name={[field.name, list.dataIndex]}
-                                      layout="vertical"
+                                      label={list.title}
                                       key={list.dataIndex}
+                                      labelAlign="right"
                                       rules={[
                                         { required: list.required, message: placeholder },
                                         ...(list.rules || []),

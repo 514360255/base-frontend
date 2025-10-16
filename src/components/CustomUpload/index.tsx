@@ -4,7 +4,7 @@
  * @Description:
  */
 import { PlusOutlined } from '@ant-design/icons';
-import { GetProp, Image, Upload, UploadProps } from 'antd';
+import { GetProp, Image, message, Upload, UploadProps } from 'antd';
 import ImgCrop, { ImgCropProps } from 'antd-img-crop';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
+  const [messageApi, messageHolder] = message.useMessage();
 
   const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -49,6 +50,10 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
 
   const customRequest = async ({ file }: any) => {
     if (!file) return;
+    if (rest.fieldBind && rest.fieldBind.maxCount && value.length >= rest.fieldBind.maxCount) {
+      messageApi.warning(`最多上传${rest.fieldBind.maxCount}个文件`);
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -81,6 +86,7 @@ const CustomUpload = ({ value = [], onChange, ...rest }: CustomUploadProps) => {
 
   return (
     <>
+      {messageHolder}
       {rest?.fieldBind?.isCrop ? (
         <ImgCrop
           rotationSlider

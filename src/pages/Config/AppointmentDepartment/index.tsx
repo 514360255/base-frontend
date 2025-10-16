@@ -107,7 +107,7 @@ const AppointmentDepartment = () => {
         required: true,
       },
       {
-        title: 'icon',
+        title: '图标',
         dataIndex: 'icon',
         type: 'upload',
         required: true,
