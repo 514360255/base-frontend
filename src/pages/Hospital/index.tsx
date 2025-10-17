@@ -40,7 +40,7 @@ const Hospital = () => {
       hideInForm: !isAdmin,
       hideInTable: !isAdmin,
       type: 'select',
-      width: 200,
+      width: 100,
     },
     {
       title: '医院名称',
@@ -54,6 +54,7 @@ const Hospital = () => {
       dataIndex: 'code',
       hideInSearch: true,
       required: true,
+      width: 140,
     },
     {
       title: '医院主图',
@@ -91,6 +92,17 @@ const Hospital = () => {
       dataIndex: 'feature',
       hideInSearch: true,
       required: true,
+      width: 200,
+    },
+    {
+      title: '收件人',
+      dataIndex: 'recipient',
+      tooltip: '多个邮箱用";"分隔开',
+      hideInSearch: true,
+      required: true,
+      // type: 'textArea',
+      width: 10,
+      ellipsis: true,
     },
     {
       title: '科室',
@@ -104,12 +116,14 @@ const Hospital = () => {
       fieldBind: {
         mode: 'multiple',
       },
+      width: 200,
     },
     {
       title: '授权次数',
       dataIndex: 'authNumber',
       hideInSearch: true,
       hideInForm: true,
+      width: 140,
     },
     {
       title: 'appid',
@@ -124,13 +138,14 @@ const Hospital = () => {
       hideInSearch: true,
       hideInTable: true,
       required: true,
+      width: 200,
     },
     {
       title: '接诊时间',
       dataIndex: 'consultationHours',
       hideInSearch: true,
       hideInTable: true,
-      required: true,
+      width: 200,
     },
     {
       title: '医院地址',
@@ -138,6 +153,7 @@ const Hospital = () => {
       hideInSearch: true,
       hideInTable: true,
       required: true,
+      width: 200,
     },
     {
       title: '医院简介',
@@ -149,6 +165,7 @@ const Hospital = () => {
       fieldBind: {
         rows: 5,
       },
+      width: 200,
     },
     {
       title: '状态',
@@ -157,18 +174,21 @@ const Hospital = () => {
       valueEnum: ENABLE_DISABLE_Enum,
       type: 'radio',
       required: true,
+      width: 100,
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       hideInSearch: true,
       hideInForm: true,
+      width: 200,
     },
     {
       title: '创建人',
       dataIndex: 'createdBy',
       hideInSearch: true,
       hideInForm: true,
+      width: 140,
     },
     {
       title: '操作',
