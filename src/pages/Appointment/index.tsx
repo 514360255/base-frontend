@@ -24,6 +24,11 @@ const Appointment = () => {
       hideInSearch: true,
     },
     {
+      title: '专家',
+      dataIndex: 'expert',
+      hideInSearch: true,
+    },
+    {
       title: '手机号',
       dataIndex: 'mobile',
       hideInSearch: true,
