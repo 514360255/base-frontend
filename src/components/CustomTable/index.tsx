@@ -118,7 +118,11 @@ const CustomTable = forwardRef<any, CustomTableProps>(
           bordered
           actionRef={actionRef}
           formRef={formRef}
-          columns={[...columns]}
+          columns={[
+            ...columns.map((item) =>
+              item.dataIndex === 'operation' ? { ...item, fixed: 'right' } : item,
+            ),
+          ]}
           request={async (params, sort, filter) => {
             if (request && !dataSource) {
               setLoading(true);

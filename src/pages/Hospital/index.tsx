@@ -168,6 +168,16 @@ const Hospital = () => {
       width: 200,
     },
     {
+      title: '额外参数',
+      dataIndex: 'ext',
+      hideInSearch: true,
+      hideInTable: true,
+      type: 'textArea',
+      fieldBind: {
+        rows: 5,
+      },
+    },
+    {
       title: '状态',
       dataIndex: 'isActive',
       valueType: 'select',

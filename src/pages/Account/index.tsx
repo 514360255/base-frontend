@@ -93,6 +93,11 @@ const Account = () => {
       rules: [{ patter: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '请输入正确邮箱' }],
     },
     {
+      title: '联系电话',
+      dataIndex: 'phone',
+      hideInSearch: true,
+    },
+    {
       title: '收件人',
       dataIndex: 'recipient',
       tooltip: '多个邮箱用";"分隔开',
