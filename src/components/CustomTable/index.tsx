@@ -108,7 +108,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
         };
       }
     }, [columns]);
-
+    // const totalWidth = columns.reduce((sum, col) => sum + (col.width || 100), 0);
     return (
       <>
         {messageHolder}
@@ -119,7 +119,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
           actionRef={actionRef}
           formRef={formRef}
           columns={[
-            ...columns.map((item) =>
+            ...columns.map((item: any) =>
               item.dataIndex === 'operation' ? { ...item, fixed: 'right' } : item,
             ),
           ]}

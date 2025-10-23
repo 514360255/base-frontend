@@ -30,7 +30,7 @@ const Expert = () => {
   const [messageApi, messageHolder] = message.useMessage();
   const [columns, setColumns] = useState<CustomColumnProps[]>([]);
   const [formColumns, setFormColumns] = useState<CustomColumnProps[]>([]);
-  const [defaultColumns, setDefaultColumns] = useState<CustomColumnProps[]>([
+  const [defaultColumns] = useState<CustomColumnProps[]>([
     {
       title: '所属人',
       dataIndex: 'accountId',
@@ -38,6 +38,7 @@ const Expert = () => {
       valueType: 'select',
       required: true,
       hideInTable: true,
+      hideInSearch: !isAdmin,
       hideInForm: !isAdmin,
     },
     {
@@ -45,6 +46,7 @@ const Expert = () => {
       dataIndex: 'accountName',
       hideInForm: true,
       hideInSearch: true,
+      hideInTable: !isAdmin,
     },
     {
       title: '所属医院',
@@ -79,6 +81,20 @@ const Expert = () => {
       hideInForm: true,
     },
     {
+      title: '排序',
+      dataIndex: 'sortOrder',
+      hideInSearch: true,
+      hideInForm: true,
+    },
+    // {
+    //   title: '介绍',
+    //   dataIndex: 'intro',
+    //   hideInSearch: true,
+    //   hideInForm: true,
+    //   ellipsis: true,
+    //   copyable: true,
+    // },
+    {
       title: '医生',
       dataIndex: 'expertList',
       type: 'list',
@@ -102,7 +118,6 @@ const Expert = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
-      width: 100,
       buttons: (record: any) => {
         return (
           <>
@@ -140,16 +155,6 @@ const Expert = () => {
         required: true,
       },
       {
-        title: '领域',
-        dataIndex: 'domain',
-        hideInSearch: true,
-        required: true,
-        type: 'textArea',
-        fieldBind: {
-          rows: 3,
-        },
-      },
-      {
         title: '介绍',
         dataIndex: 'intro',
         hideInSearch: true,
@@ -158,6 +163,13 @@ const Expert = () => {
         fieldBind: {
           rows: 5,
         },
+      },
+      {
+        title: '排序',
+        dataIndex: 'sortOrder',
+        hideInSearch: true,
+        required: true,
+        type: 'inputNumber',
       },
     ],
   };
@@ -173,16 +185,16 @@ const Expert = () => {
   };
 
   const submit = async (data: any) => {
-    if (!data.expertList || data.expertList.length === 0) {
-      messageApi.error('请添加医生');
-      return Promise.reject();
-    }
     if (data.id) {
       await updateAppointmentExpert({
         ...data,
         avatar: JSON.stringify(data.avatar || '[]'),
       });
     } else {
+      if (!data.expertList || data.expertList.length === 0) {
+        messageApi.error('请添加医生');
+        return Promise.reject();
+      }
       if (!isAdmin) {
         data.accountId = userInfo.id;
       }

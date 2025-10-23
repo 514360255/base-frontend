@@ -7,8 +7,12 @@
 import { queryAppointmentPage } from '@/api/appointment';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomTable from '@/components/CustomTable';
+import { USER_INFO_KEY } from '@/constants';
+import Local from '@/utils/store';
 
 const Appointment = () => {
+  const userInfo = Local.get(USER_INFO_KEY);
+  const isAdmin = userInfo.roleCode === 'SUPER_ADMIN';
   const columns: CustomColumnProps[] = [
     {
       title: '医院名称',
@@ -51,6 +55,8 @@ const Appointment = () => {
     {
       title: '所属人',
       dataIndex: 'accountName',
+      hideInSearch: !isAdmin,
+      hideInTable: !isAdmin,
     },
   ];
 
