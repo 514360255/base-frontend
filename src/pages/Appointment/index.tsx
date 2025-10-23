@@ -24,7 +24,7 @@ const Appointment = () => {
       hideInSearch: true,
     },
     {
-      title: '专家',
+      title: '医生',
       dataIndex: 'expert',
       hideInSearch: true,
     },

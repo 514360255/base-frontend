@@ -19,7 +19,7 @@ import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 const Expert = () => {
@@ -27,6 +27,7 @@ const Expert = () => {
   const tableRef: any = useRef();
   const modalRef: any = useRef();
   const isAdmin = userInfo.roleCode === 'SUPER_ADMIN';
+  const [messageApi, messageHolder] = message.useMessage();
   const [columns, setColumns] = useState<CustomColumnProps[]>([]);
   const [formColumns, setFormColumns] = useState<CustomColumnProps[]>([]);
   const [defaultColumns, setDefaultColumns] = useState<CustomColumnProps[]>([
@@ -78,19 +79,7 @@ const Expert = () => {
       hideInForm: true,
     },
     {
-      title: '领域',
-      dataIndex: 'domain',
-      hideInSearch: true,
-      hideInForm: true,
-    },
-    {
-      title: '介绍',
-      dataIndex: 'intro',
-      hideInSearch: true,
-      hideInForm: true,
-    },
-    {
-      title: '专家',
+      title: '医生',
       dataIndex: 'expertList',
       type: 'list',
       hideInTable: true,
@@ -156,6 +145,9 @@ const Expert = () => {
         hideInSearch: true,
         required: true,
         type: 'textArea',
+        fieldBind: {
+          rows: 3,
+        },
       },
       {
         title: '介绍',
@@ -163,6 +155,9 @@ const Expert = () => {
         hideInSearch: true,
         required: true,
         type: 'textArea',
+        fieldBind: {
+          rows: 5,
+        },
       },
     ],
   };
@@ -178,12 +173,19 @@ const Expert = () => {
   };
 
   const submit = async (data: any) => {
+    if (!data.expertList || data.expertList.length === 0) {
+      messageApi.error('请添加医生');
+      return Promise.reject();
+    }
     if (data.id) {
       await updateAppointmentExpert({
         ...data,
         avatar: JSON.stringify(data.avatar || '[]'),
       });
     } else {
+      if (!isAdmin) {
+        data.accountId = userInfo.id;
+      }
       await saveAppointmentExpert({
         ...data,
         expertList: data.expertList.map(({ avatar, ...item }: any) => ({
@@ -207,6 +209,7 @@ const Expert = () => {
 
   return (
     <>
+      {messageHolder}
       <CustomTable
         isUpdateState={false}
         ref={tableRef}
@@ -222,7 +225,7 @@ const Expert = () => {
       <CustomModal
         formList={formList}
         ref={modalRef}
-        title="专家"
+        title="医生"
         saveRequest={submit}
         updateRequest={submit}
         columns={formColumns}

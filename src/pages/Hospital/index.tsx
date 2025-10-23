@@ -83,7 +83,7 @@ const Hospital = () => {
         request: uploadImg,
         isCrop: true,
         imgCrop: {
-          aspect: 16 / 9,
+          aspect: 18 / 12,
         },
       },
     },
