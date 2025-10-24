@@ -40,3 +40,11 @@ export const updateHospitalState = (data: object) => request.post(`/hospital/sta
  * @param data
  */
 export const updateHospital = (data: object) => request.put(`/hospital`, data);
+
+/**
+ * 修改密钥
+ * @param id
+ * @param key
+ */
+export const updateHospitalSecret = (id: string, key: string) =>
+  request.put(`/hospital/${id}/${key}`);

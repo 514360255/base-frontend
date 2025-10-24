@@ -17,6 +17,8 @@ const Appointment = () => {
     {
       title: '医院名称',
       dataIndex: 'hospitalName',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '姓名',

@@ -13,6 +13,7 @@ import {
   queryHospitalPage,
   saveHospital,
   updateHospital,
+  updateHospitalSecret,
   updateHospitalState,
 } from '@/api/hospital';
 import { CustomColumnProps } from '@/components/compontent';
@@ -22,14 +23,19 @@ import { USER_INFO_KEY } from '@/constants';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
-import { Button } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { Button, Form, Input, message, Modal } from 'antd';
+import { FormRef } from 'rc-field-form';
+import { LegacyRef, useEffect, useRef, useState } from 'react';
 
 const Hospital = () => {
   const userInfo = Local.get(USER_INFO_KEY);
   const isAdmin = userInfo.roleCode === 'SUPER_ADMIN';
   const modalRef: any = useRef();
   const tableRef: any = useRef();
+  const formRef: LegacyRef<FormRef> | undefined = useRef<any>();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, messageHolder] = message.useMessage();
   const [columns, setColumns] = useState<CustomColumnProps[]>([
     {
       title: '所属人',
@@ -191,13 +197,24 @@ const Hospital = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
-      width: 200,
+      width: isAdmin ? 280 : 200,
       buttons: (record: any) => {
         return (
           <>
             <Button type="link" onClick={() => addHospital(record)}>
               编辑
             </Button>
+            {isAdmin && (
+              <Button
+                type="link"
+                onClick={() => {
+                  setOpen(true);
+                  formRef.current?.setFieldValue('id', record.id);
+                }}
+              >
+                修改密钥
+              </Button>
+            )}
           </>
         );
       },
@@ -231,6 +248,21 @@ const Hospital = () => {
     }
   };
 
+  const updateSecretEvent = async () => {
+    setLoading(true);
+    try {
+      const { id, key } = await formRef.current?.validateFields();
+      await updateHospitalSecret(id, key);
+      messageApi.success('修改成功');
+      formRef.current?.resetFields();
+      setOpen(false);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin) {
       queryAdminUserList().then((data: any) => {
@@ -257,6 +289,23 @@ const Hospital = () => {
 
   return (
     <>
+      {messageHolder}
+      <Modal
+        open={open}
+        title="修改密钥"
+        onCancel={() => setOpen(false)}
+        onOk={updateSecretEvent}
+        confirmLoading={loading}
+      >
+        <Form size="large" layout="vertical" ref={formRef}>
+          <Form.Item noStyle name="id">
+            <Input hidden />
+          </Form.Item>
+          <Form.Item label="密钥" name="key" rules={[{ required: true, message: '请输入密钥' }]}>
+            <Input placeholder="请输入密钥" />
+          </Form.Item>
+        </Form>
+      </Modal>
       <CustomTable
         ref={tableRef}
         columns={columns}

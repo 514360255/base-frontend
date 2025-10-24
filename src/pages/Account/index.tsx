@@ -17,11 +17,14 @@ import { queryRoleDataList } from '@/api/permission/role';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
+import { USER_INFO_KEY } from '@/constants';
 import { ENABLE_DISABLE_Enum } from '@/constants/enum';
+import Local from '@/utils/store';
 import { Button } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 const Account = () => {
+  const userInfo = Local.get(USER_INFO_KEY);
   const tableRef: any = useRef();
   const modalRef: any = useRef();
   const [columns, setColumns] = useState<CustomColumnProps[]>([
@@ -206,6 +209,8 @@ const Account = () => {
   return (
     <>
       <CustomTable
+        isDelete={!(userInfo.roleCode === 'ADMIN')}
+        isUpdateState={!(userInfo.roleCode === 'ADMIN')}
         ref={tableRef}
         columns={columns}
         request={queryUserList}
