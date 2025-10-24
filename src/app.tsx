@@ -102,6 +102,20 @@ export function render(oldRender: any) {
 // @ts-ignore
 export function layout({ initialState }) {
   return {
+    token: {
+      sider: {
+        colorMenuBackground: '#001529', // menu 的背景颜色
+        colorMenuItemDivider: 'rgba(255, 255, 255, 0.15)', // menuItem 分割线的颜色
+        colorTextMenu: '#a6aaae', // menuItem 的字体颜色
+        colorTextMenuSecondary: '#a6aaae', // menu 的二级字体颜色，比如 footer 和 action 的 icon
+        colorTextMenuSelected: '#ffffff', // menuItem 的选中字体颜色
+        colorTextMenuActive: '#ffffff', // menuItem hover 的选中字体颜色
+        colorTextMenuItemHover: '#ffffff', // menuItem 的 hover 字体颜色
+        colorBgMenuItemActive: 'rgba(0, 0, 0, 0.15)', // menuItem 的点击时背景颜色
+        colorBgMenuItemHover: 'rgba(90, 75, 75, 0.03)', // menuItem 的 hover 背景颜色
+        colorBgMenuItemSelected: '#409EFF', // menuItem 的选中背景颜色
+      },
+    },
     avatarProps: {
       render: () => {
         return <AvatarDropdown />;
