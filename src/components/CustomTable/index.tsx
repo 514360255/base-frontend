@@ -81,7 +81,7 @@ const CustomTable = forwardRef<any, CustomTableProps>(
       }
       if (operation) {
         if (!operation.width) {
-          operation.width = 100;
+          operation.width = 140;
         }
         operation.render = (_, record) => {
           return (
@@ -108,21 +108,19 @@ const CustomTable = forwardRef<any, CustomTableProps>(
         };
       }
     }, [columns]);
-    // const totalWidth = columns.reduce((sum, col) => sum + (col.width || 100), 0);
+    const totalWidth = columns.reduce((sum: any, col: any) => sum + (col.width || 100), 0);
     return (
       <>
         {messageHolder}
         <ProTable
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: totalWidth }}
           loading={loading}
           bordered
           actionRef={actionRef}
           formRef={formRef}
-          columns={[
-            ...columns.map((item: any) =>
-              item.dataIndex === 'operation' ? { ...item, fixed: 'right' } : item,
-            ),
-          ]}
+          columns={columns.map((item: CustomColumnProps) =>
+            item.dataIndex === 'operation' ? { ...item, fixed: 'right' } : item,
+          )}
           request={async (params, sort, filter) => {
             if (request && !dataSource) {
               setLoading(true);

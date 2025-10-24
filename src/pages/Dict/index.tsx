@@ -77,7 +77,7 @@ const Dict = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
-      width: 100,
+      width: 230,
       buttons: (record: any) => {
         return (
           <>

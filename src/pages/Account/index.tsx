@@ -91,6 +91,7 @@ const Account = () => {
       hideInSearch: true,
       // @ts-ignore
       rules: [{ patter: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '请输入正确邮箱' }],
+      width: 180,
     },
     {
       title: '联系电话',
@@ -101,7 +102,7 @@ const Account = () => {
       title: '收件人',
       dataIndex: 'recipient',
       tooltip: '多个邮箱用";"分隔开',
-      width: 100,
+      width: 200,
       ellipsis: true,
       hideInSearch: true,
       required: true,
@@ -146,6 +147,7 @@ const Account = () => {
       hideInSearch: true,
       hideInForm: true,
       fixed: 'right',
+      width: 200,
       buttons: (record: any) => {
         return (
           <>

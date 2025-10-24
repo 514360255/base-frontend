@@ -79,6 +79,7 @@ const Role = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
+      width: 200,
       buttons: (record: any) => {
         return (
           <>

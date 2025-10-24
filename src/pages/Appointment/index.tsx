@@ -41,6 +41,7 @@ const Appointment = () => {
       title: '预约时间',
       dataIndex: 'appointmentTime',
       hideInSearch: true,
+      width: 170,
     },
     {
       title: '疾病类型',
@@ -51,6 +52,7 @@ const Appointment = () => {
       title: '备注',
       dataIndex: 'remark',
       hideInSearch: true,
+      ellipsis: true,
     },
     {
       title: '所属人',

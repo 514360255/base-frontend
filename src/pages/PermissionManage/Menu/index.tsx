@@ -48,6 +48,8 @@ const Menu = () => {
       dataIndex: 'pathname',
       hideInSearch: true,
       required: true,
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '菜单类型',
@@ -92,6 +94,7 @@ const Menu = () => {
       dataIndex: 'createdAt',
       hideInSearch: true,
       hideInForm: true,
+      width: 170,
     },
     {
       title: '创建人',
@@ -104,7 +107,7 @@ const Menu = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
-      width: 100,
+      width: 350,
       buttons: (record: any) => {
         return (
           <>

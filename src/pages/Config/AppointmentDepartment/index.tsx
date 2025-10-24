@@ -86,7 +86,6 @@ const AppointmentDepartment = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
-      width: 100,
       buttons: (record: any) => {
         return (
           <>

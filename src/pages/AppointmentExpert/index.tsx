@@ -86,14 +86,14 @@ const Expert = () => {
       hideInSearch: true,
       hideInForm: true,
     },
-    // {
-    //   title: '介绍',
-    //   dataIndex: 'intro',
-    //   hideInSearch: true,
-    //   hideInForm: true,
-    //   ellipsis: true,
-    //   copyable: true,
-    // },
+    {
+      title: '介绍',
+      dataIndex: 'intro',
+      hideInSearch: true,
+      hideInForm: true,
+      ellipsis: true,
+      width: 160,
+    },
     {
       title: '医生',
       dataIndex: 'expertList',
@@ -106,6 +106,7 @@ const Expert = () => {
       dataIndex: 'createdAt',
       hideInSearch: true,
       hideInForm: true,
+      width: 160,
     },
     {
       title: '创建人',
@@ -118,6 +119,7 @@ const Expert = () => {
       dataIndex: 'operation',
       hideInSearch: true,
       hideInForm: true,
+      fixed: 'right',
       buttons: (record: any) => {
         return (
           <>
