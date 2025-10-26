@@ -173,6 +173,16 @@ const Hospital = () => {
       },
     },
     {
+      title: '疾病类型',
+      dataIndex: 'diseaseType',
+      hideInSearch: true,
+      hideInTable: true,
+      type: 'textArea',
+      fieldBind: {
+        rows: 5,
+      },
+    },
+    {
       title: '状态',
       dataIndex: 'isActive',
       valueType: 'select',
