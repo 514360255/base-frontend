@@ -68,7 +68,15 @@ const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
       parentId: parentId,
       icon: <DynamicIcon iconName={item.icon} />,
       hideInMenu: item.isShow === 0,
-      ...(Component ? { element: Component && <Component /> } : {}),
+      ...(Component
+        ? {
+            element: Component && (
+              <React.Suspense fallback={<Spin fullscreen />}>
+                <Component />
+              </React.Suspense>
+            ),
+          }
+        : {}),
       ...(Array.isArray(item.children)
         ? {
             element: (
@@ -91,7 +99,7 @@ export function render(oldRender: any) {
         extraRoutes = getRouteData(data);
         oldRender();
       })
-      .catch((e) => console.log(e));
+      .catch((e) => oldRender());
   }
   if (!userInfo) {
     oldRender();
