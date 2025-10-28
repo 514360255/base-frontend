@@ -57,7 +57,8 @@ const Hospital = () => {
       title: '医院CODE',
       dataIndex: 'code',
       hideInSearch: true,
-      required: true,
+      hideInForm: true,
+      ellipsis: true,
     },
     {
       title: '医院主图',
