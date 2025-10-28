@@ -39,6 +39,70 @@ ol {
     color: #fff !important;
   }
 }
+.ant-layout-sider-children{
+  padding-right: 0 !important;
+}
+
+.ant-pro-global-header{
+  margin-left: 0 !important;
+  .ant-pro-global-header-logo{
+    height: 56px;
+    width: 256px;
+    background-color: #001529;
+    display: flex;
+    justify-content: center;
+    transition: all 0.2s,background 0s;
+    overflow: hidden;
+    h1{
+      color: #fff;
+      opacity: 1;
+      transition: all 0.2s,background 0s;
+    }
+  }
+}
+.layout-page-container{
+  .ant-pro-global-header-logo{
+    width: 64px;
+    h1{
+      opacity: 0;
+      display: none;
+    }
+  }
+}
+.ant-pro-base-menu-vertical-item-title-collapsed .ant-pro-base-menu-vertical-item-icon{
+  color: #fff !important;
+}
+.ant-menu-submenu.ant-menu-submenu-popup .ant-pro-base-menu-vertical-item-title{
+  color: #383838;
+}
+.ant-pro-base-menu-vertical-menu-item{
+  &:hover{
+    .ant-pro-base-menu-vertical-item-title{
+      color: #fff;
+    }
+  }
+}
+.ant-layout-sider-children{
+  >div{
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(144, 147, 153, 0.5);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(144, 147, 153, 0.8);
+    }
+  }
+}
 @media (max-width: 768px) {
   .ant-table {
     width: 100%;

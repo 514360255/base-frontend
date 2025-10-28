@@ -5,8 +5,7 @@ import { USER_INFO_KEY } from '@/constants';
 import { capitalizeFirstLetters } from '@/utils';
 import Local from '@/utils/store';
 import { ProBreadcrumb } from '@ant-design/pro-layout';
-import { history } from '@umijs/max';
-import { Spin } from 'antd';
+import { history, useModel } from '@umijs/max';
 import React from 'react';
 import defaultSettings from '../config/defaultSettings';
 import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
@@ -71,7 +70,7 @@ const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
       ...(Component
         ? {
             element: Component && (
-              <React.Suspense fallback={<Spin fullscreen />}>
+              <React.Suspense>
                 <Component />
               </React.Suspense>
             ),
@@ -80,7 +79,7 @@ const getRouteData = (routes: any, parentId = 'ant-design-pro-layout') => {
       ...(Array.isArray(item.children)
         ? {
             element: (
-              <React.Suspense fallback={<Spin fullscreen />}>
+              <React.Suspense>
                 <ParentComponent />
               </React.Suspense>
             ),
@@ -109,19 +108,26 @@ export function render(oldRender: any) {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 // @ts-ignore
 export function layout({ initialState }) {
+  const { collapsed, setCollapsed } = useModel('useCollapsedModel') ?? {};
   return {
+    collapsed,
+    onCollapse: (val: boolean) => {
+      setCollapsed(val);
+    },
+    className: collapsed ? 'layout-page-container' : '',
     token: {
       sider: {
-        colorMenuBackground: '#001529', // menu 的背景颜色
-        colorMenuItemDivider: 'rgba(255, 255, 255, 0.15)', // menuItem 分割线的颜色
-        colorTextMenu: '#a6aaae', // menuItem 的字体颜色
-        colorTextMenuSecondary: '#a6aaae', // menu 的二级字体颜色，比如 footer 和 action 的 icon
-        colorTextMenuSelected: '#ffffff', // menuItem 的选中字体颜色
-        colorTextMenuActive: '#ffffff', // menuItem hover 的选中字体颜色
-        colorTextMenuItemHover: '#ffffff', // menuItem 的 hover 字体颜色
-        colorBgMenuItemActive: 'rgba(0, 0, 0, 0.15)', // menuItem 的点击时背景颜色
-        colorBgMenuItemHover: 'rgba(90, 75, 75, 0.03)', // menuItem 的 hover 背景颜色
-        colorBgMenuItemSelected: '#409EFF', // menuItem 的选中背景颜色
+        colorMenuBackground: '#001529',
+        colorTextMenuTitle: '#FFFFFF',
+        colorMenuItemDivider: '#383838',
+
+        colorTextMenu: '#FFFFFF',
+        colorTextMenuSelected: '#FFFFFF',
+        colorTextMenuItemHover: '#FFFFFF',
+
+        colorBgMenuItemActive: '#409EFF',
+        colorBgMenuItemHover: '#409EFF',
+        colorBgMenuItemSelected: '#409EFF',
       },
     },
     avatarProps: {
@@ -137,8 +143,11 @@ export function layout({ initialState }) {
       }
     },
     menuHeaderRender: undefined,
+    breadcrumb: true,
+    breadcrumbProps: {
+      minLength: 1, // 至少一级也显示
+    },
     headerContentRender: () => <ProBreadcrumb />,
-    breadcrumbRender: (routers = []) => [...routers],
     ...defaultSettings,
   };
 }
