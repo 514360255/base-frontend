@@ -20,7 +20,7 @@ import { CustomColumnProps } from '@/components/compontent';
 import CustomModal from '@/components/CustomModal';
 import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
-import { ENABLE_DISABLE_Enum } from '@/constants/enum';
+import { ENABLE_DISABLE_Enum, YES_NO } from '@/constants/enum';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
 import { Button, Form, Input, message, Modal } from 'antd';
@@ -61,12 +61,11 @@ const Hospital = () => {
       ellipsis: true,
     },
     {
-      title: '医院主图',
+      title: '医院介绍主图',
       dataIndex: 'introPic',
       hideInTable: true,
       hideInSearch: true,
       type: 'upload',
-      required: true,
       fieldBind: {
         maxCount: 1,
         request: uploadImg,
@@ -82,7 +81,6 @@ const Hospital = () => {
       hideInTable: true,
       hideInSearch: true,
       type: 'upload',
-      required: true,
       fieldBind: {
         request: uploadImg,
         isCrop: true,
@@ -184,6 +182,13 @@ const Hospital = () => {
       },
     },
     {
+      title: '是否展示医生栏目',
+      dataIndex: 'isShowDoctorColumn',
+      valueType: 'select',
+      valueEnum: YES_NO,
+      type: 'radio',
+    },
+    {
       title: '状态',
       dataIndex: 'isActive',
       valueType: 'select',
@@ -249,8 +254,8 @@ const Hospital = () => {
     const { envPic, introPic, ...other } = data;
     const params = {
       ...other,
-      envPic: envPic ? JSON.stringify(envPic) : [],
-      introPic: introPic ? JSON.stringify(introPic) : [],
+      envPic: JSON.stringify(envPic || []),
+      introPic: JSON.stringify(introPic || []),
     };
     if (data.id) {
       await updateHospital(params);

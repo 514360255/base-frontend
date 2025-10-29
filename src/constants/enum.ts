@@ -11,6 +11,13 @@ export const ENABLE_DISABLE_Enum = {
   0: { text: '禁用', status: 'error' },
   1: { text: '启用', status: 'success' },
 };
+/**
+ * 是否
+ */
+export const YES_NO = {
+  0: { text: '否' },
+  1: { text: '是' },
+};
 
 /**
  * 显示隐藏
