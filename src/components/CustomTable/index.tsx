@@ -116,6 +116,11 @@ const CustomTable = forwardRef<any, CustomTableProps>(
           scroll={{ x: totalWidth }}
           loading={loading}
           bordered
+          pagination={{
+            showSizeChanger: true,
+            showQuickJumper: true,
+            defaultPageSize: 10,
+          }}
           actionRef={actionRef}
           formRef={formRef}
           columns={columns.map((item: CustomColumnProps) =>
@@ -125,8 +130,11 @@ const CustomTable = forwardRef<any, CustomTableProps>(
             if (request && !dataSource) {
               setLoading(true);
               try {
+                const pageNo = params.current;
+                delete params.current;
                 const { list, ...data } = await request({
                   ...params,
+                  pageNo,
                   ...sort,
                   ...filter,
                   ...defaultQueryParams,

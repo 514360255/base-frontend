@@ -182,10 +182,11 @@ const Hospital = () => {
       },
     },
     {
-      title: '是否展示医生栏目',
+      title: '显示医生',
       dataIndex: 'isShowDoctorColumn',
       valueType: 'select',
       valueEnum: YES_NO,
+      hideInSearch: true,
       type: 'radio',
     },
     {
