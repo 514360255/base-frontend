@@ -87,7 +87,7 @@ const Expert = () => {
       hideInForm: true,
     },
     {
-      title: '预约时间',
+      title: '坐诊时间',
       dataIndex: 'consultationHours',
       hideInSearch: true,
       hideInForm: true,
@@ -163,7 +163,7 @@ const Expert = () => {
         required: true,
       },
       {
-        title: '预约时间',
+        title: '坐诊时间',
         dataIndex: 'consultationHours',
         hideInSearch: true,
       },
@@ -198,7 +198,6 @@ const Expert = () => {
   };
 
   const submit = async (data: any) => {
-    data.consultationHours = data.consultationHours || '8:00 ~ 17:30';
     if (data.id) {
       await updateAppointmentExpert({
         ...data,
