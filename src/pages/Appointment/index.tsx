@@ -5,17 +5,21 @@
  */
 
 import { queryAdminUserList } from '@/api/account';
-import { queryAppointmentPage } from '@/api/appointment';
+import { queryAppointmentPage, updateIsVisit } from '@/api/appointment';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
-import { useEffect, useState } from 'react';
+import { Button, message, Popconfirm, Tag } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 
 const Appointment = () => {
+  const tableRef: any = useRef();
   const userInfo = Local.get(USER_INFO_KEY);
   const isAdmin = userInfo.roleCode === 'SUPER_ADMIN';
+  const isAuditor = userInfo.roleCode === 'AUDITOR';
+  const [messageApi, contextHolder] = message.useMessage();
   const [columns, setColumns] = useState<CustomColumnProps[]>([
     {
       title: '所属人',
@@ -35,6 +39,8 @@ const Appointment = () => {
       dataIndex: 'hospitalName',
       width: 200,
       ellipsis: true,
+      hideInSearch: isAuditor,
+      hideInTable: isAuditor,
     },
     {
       title: '姓名',
@@ -72,7 +78,45 @@ const Appointment = () => {
       hideInSearch: true,
       ellipsis: true,
     },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      width: 200,
+      hideInSearch: true,
+      buttons: (record) => (
+        <>
+          {[0, 1].includes(record.isVisit) ? (
+            <Tag color={record.isVisit === 0 ? 'error' : 'success'}>
+              {record.isVisit === 0 ? '未到诊' : '已到诊'}
+            </Tag>
+          ) : (
+            <>
+              <Popconfirm
+                title="确定当前患者【已到诊】？"
+                onConfirm={() => handleVisit(record.id, 1)}
+              >
+                <Button type="link">已到诊</Button>
+              </Popconfirm>
+              <Popconfirm
+                title="确定当前患者【未到诊】？"
+                onConfirm={() => handleVisit(record.id, 0)}
+              >
+                <Button type="link" danger>
+                  未到诊
+                </Button>
+              </Popconfirm>
+            </>
+          )}
+        </>
+      ),
+    },
   ]);
+
+  const handleVisit = async (id: string, isVisit: number) => {
+    await updateIsVisit(id, isVisit);
+    messageApi.success(isVisit ? '已到诊' : '未到诊');
+    tableRef.current.reload();
+  };
 
   useEffect(() => {
     if (isAdmin) {
@@ -82,7 +126,19 @@ const Appointment = () => {
     }
   }, []);
 
-  return <CustomTable columns={columns} request={queryAppointmentPage} />;
+  return (
+    <>
+      {contextHolder}
+      <CustomTable
+        ref={tableRef}
+        isUpdateState={false}
+        isDelete={false}
+        defaultQueryParams={{ hospitalId: isAuditor ? userInfo.hospitalId : undefined }}
+        columns={columns}
+        request={queryAppointmentPage}
+      />
+    </>
+  );
 };
 
 export default Appointment;

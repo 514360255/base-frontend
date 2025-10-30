@@ -4,15 +4,14 @@ import Local from '@/utils/store';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { Helmet, history, useModel } from '@umijs/max';
-import { notification, Tabs } from 'antd';
+import { Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Settings from '../../../config/defaultSettings';
 import styles from './index.less';
 
 const Login: React.FC = () => {
-  const [type, setType] = useState<string>('account');
+  const [type] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
-  const [notificationApi, contextHolder] = notification.useNotification();
 
   const handleSubmit = async (values: any) => {
     try {
@@ -24,11 +23,7 @@ const Login: React.FC = () => {
         Local.set(USER_INFO_KEY, data);
         setTimeout(() => {
           // history.push('/home');
-          window.location.href = '/home';
-          notificationApi.success({
-            message: '登录成功',
-            description: `欢迎回来，${data.name}！`,
-          });
+          window.location.href = '/home?type=success';
         });
       }
       return;
@@ -45,7 +40,6 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.containerClassName}>
-      {contextHolder}
       <Helmet>
         <title>
           {'登录'}- {Settings.title}
@@ -60,7 +54,6 @@ const Login: React.FC = () => {
         >
           <Tabs
             activeKey={type}
-            onChange={setType}
             centered
             size="large"
             items={[{ key: 'account', label: '账户密码登录' }]}

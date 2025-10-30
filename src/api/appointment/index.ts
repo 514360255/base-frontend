@@ -11,3 +11,11 @@ import request from '@/utils/request';
  * @param params
  */
 export const queryAppointmentPage = (params: any) => request.get('/appointment', { params });
+
+/**
+ * 修改是否已看诊
+ * @param id
+ * @param isVisit
+ */
+export const updateIsVisit = (id: string, isVisit: number) =>
+  request.put(`/appointment/${id}/${isVisit}`);
