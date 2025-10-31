@@ -11,7 +11,7 @@ import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
-import { Button, message, Popconfirm, Tag } from 'antd';
+import { Button, message, Popconfirm, Typography } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 const Appointment = () => {
@@ -86,22 +86,27 @@ const Appointment = () => {
       buttons: (record) => (
         <>
           {[0, 1].includes(record.isVisit) ? (
-            <Tag color={record.isVisit === 0 ? 'error' : 'success'}>
+            <Typography.Text
+              type={record.isVisit === 0 ? 'secondary' : 'danger'}
+              style={{ padding: '0 16px' }}
+            >
               {record.isVisit === 0 ? '未到诊' : '已到诊'}
-            </Tag>
+            </Typography.Text>
           ) : (
             <>
               <Popconfirm
                 title="确定当前患者【已到诊】？"
                 onConfirm={() => handleVisit(record.id, 1)}
               >
-                <Button type="link">已到诊</Button>
+                <Button type="text" danger>
+                  已到诊
+                </Button>
               </Popconfirm>
               <Popconfirm
                 title="确定当前患者【未到诊】？"
                 onConfirm={() => handleVisit(record.id, 0)}
               >
-                <Button type="link" danger>
+                <Button type="text" style={{ color: 'rgba(0,0,0,0.45)' }}>
                   未到诊
                 </Button>
               </Popconfirm>
