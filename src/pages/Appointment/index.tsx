@@ -14,6 +14,7 @@ import { VISIT_ENUM } from '@/constants/enum';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
 import { Button, message, Popconfirm, Typography } from 'antd';
+import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 
 const Appointment = () => {
@@ -77,6 +78,19 @@ const Appointment = () => {
       dataIndex: 'appointmentTime',
       hideInSearch: true,
       width: 170,
+    },
+    {
+      title: '预约时间',
+      dataIndex: 'appointmentTimeRange',
+      hideInTable: true,
+      hideInForm: true,
+      valueType: 'dateRange',
+      search: {
+        transform: (value) => ({
+          appointmentTimeStart: `${value[0]} 00:00:00`,
+          appointmentTimeEnd: `${dayjs(value[1]).subtract(1, 'day')} 00:00:00`,
+        }),
+      },
     },
     {
       title: '疾病类型',
