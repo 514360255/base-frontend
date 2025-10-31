@@ -120,6 +120,7 @@ const Account = () => {
       formKey: 'roleCode_form_key',
       type: 'select',
       valueEnum: {},
+      valueType: 'select',
       width: 100,
     },
     {

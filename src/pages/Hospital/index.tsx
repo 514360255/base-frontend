@@ -46,6 +46,7 @@ const Hospital = () => {
       hideInForm: !isAdmin,
       hideInTable: !isAdmin,
       type: 'select',
+      valueType: 'select',
     },
     {
       title: '医院名称',
