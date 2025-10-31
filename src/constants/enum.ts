@@ -34,3 +34,11 @@ export const MENU_TYPE_ENUM = {
   0: { text: '按钮' },
   1: { text: '菜单' },
 };
+
+/**
+ * 是否到诊
+ */
+export const VISIT_ENUM = {
+  0: { text: '未到诊' },
+  1: { text: '已到诊' },
+};

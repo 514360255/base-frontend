@@ -10,6 +10,7 @@ import { queryHospitalPage } from '@/api/hospital';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
+import { VISIT_ENUM } from '@/constants/enum';
 import { transformValueEnum } from '@/utils';
 import Local from '@/utils/store';
 import { Button, message, Popconfirm, Typography } from 'antd';
@@ -87,6 +88,13 @@ const Appointment = () => {
       dataIndex: 'remark',
       hideInSearch: true,
       ellipsis: true,
+    },
+    {
+      title: '是否到诊',
+      dataIndex: 'isVisit',
+      hideInTable: true,
+      hideInForm: true,
+      valueEnum: VISIT_ENUM,
     },
     {
       title: '操作',
