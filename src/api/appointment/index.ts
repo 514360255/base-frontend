@@ -19,3 +19,9 @@ export const queryAppointmentPage = (params: any) => request.get('/appointment',
  */
 export const updateIsVisit = (id: string, isVisit: number) =>
   request.put(`/appointment/${id}/${isVisit}`);
+
+/**
+ * 删除预约
+ * @param id
+ */
+export const deleteAppointment = (id: string) => request.delete(`/appointment/${id}`);

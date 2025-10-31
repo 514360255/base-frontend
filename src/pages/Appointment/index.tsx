@@ -5,7 +5,7 @@
  */
 
 import { queryAdminUserList } from '@/api/account';
-import { queryAppointmentPage, updateIsVisit } from '@/api/appointment';
+import { deleteAppointment, queryAppointmentPage, updateIsVisit } from '@/api/appointment';
 import { queryHospitalPage } from '@/api/hospital';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomTable from '@/components/CustomTable';
@@ -99,14 +99,14 @@ const Appointment = () => {
     {
       title: '操作',
       dataIndex: 'operation',
-      width: 200,
+      width: 220,
       hideInSearch: true,
       buttons: (record) => (
         <>
           {[0, 1].includes(record.isVisit) ? (
             <Typography.Text
               type={record.isVisit === 0 ? 'secondary' : 'danger'}
-              style={{ padding: '0 16px' }}
+              style={{ padding: '0 16px', lineHeight: '32px' }}
             >
               {record.isVisit === 0 ? '未到诊' : '已到诊'}
             </Typography.Text>
@@ -162,9 +162,10 @@ const Appointment = () => {
       <CustomTable
         ref={tableRef}
         isUpdateState={false}
-        isDelete={false}
+        isDelete={isAdmin}
         defaultQueryParams={{ hospitalId: isAuditor ? userInfo.hospitalId : undefined }}
         columns={columns}
+        deleteRequest={deleteAppointment}
         request={queryAppointmentPage}
       />
     </>
