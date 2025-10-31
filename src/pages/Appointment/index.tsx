@@ -6,6 +6,7 @@
 
 import { queryAdminUserList } from '@/api/account';
 import { queryAppointmentPage, updateIsVisit } from '@/api/appointment';
+import { queryHospitalPage } from '@/api/hospital';
 import { CustomColumnProps } from '@/components/compontent';
 import CustomTable from '@/components/CustomTable';
 import { USER_INFO_KEY } from '@/constants';
@@ -36,10 +37,19 @@ const Appointment = () => {
     },
     {
       title: '医院名称',
+      dataIndex: 'hospitalId',
+      width: 200,
+      ellipsis: true,
+      valueType: 'select',
+      hideInSearch: isAuditor,
+      hideInTable: true,
+    },
+    {
+      title: '医院名称',
       dataIndex: 'hospitalName',
       width: 200,
       ellipsis: true,
-      hideInSearch: isAuditor,
+      hideInSearch: true,
       hideInTable: isAuditor,
     },
     {
@@ -123,12 +133,19 @@ const Appointment = () => {
     tableRef.current.reload();
   };
 
+  const getHospitalData = (accountId?: string) => {
+    queryHospitalPage({ pageSizeZero: true, pageSize: 0, accountId }).then(({ list }: any) => {
+      setColumns(transformValueEnum(columns, list, 'hospitalId'));
+    });
+  };
+
   useEffect(() => {
     if (isAdmin) {
       queryAdminUserList().then((data: any) => {
         setColumns(transformValueEnum(columns, data, 'accountId'));
       });
     }
+    getHospitalData();
   }, []);
 
   return (

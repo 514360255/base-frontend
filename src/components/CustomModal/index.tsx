@@ -51,6 +51,16 @@ const CustomModal = forwardRef<any, CustomModalProps>(
       const newColumns: CustomColumnProps[] = (columns || []).filter(
         (item: CustomColumnProps) => !item.hideInForm,
       );
+      columns.forEach((item: CustomColumnProps) => {
+        // 所有select/treeSelect都附加搜索功能
+        if (['select', 'treeSelect'].includes(item.valueType as string)) {
+          item.fieldProps = {
+            showSearch: true,
+            ...(item.fieldProps || {}),
+          };
+        }
+        return item;
+      });
       return cloneDeep(newColumns).map((item) => {
         if (item.formKey) {
           const key = /_form_key$/.test(item.formKey) ? '' : formKey;

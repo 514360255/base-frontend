@@ -79,6 +79,16 @@ const CustomTable = forwardRef<any, CustomTableProps>(
           width: 70,
         });
       }
+      columns.forEach((item: CustomColumnProps) => {
+        // 所有select/treeSelect都附加搜索功能
+        if (['select', 'treeSelect'].includes(item.valueType as string)) {
+          item.fieldProps = {
+            showSearch: true,
+            ...(item.fieldProps || {}),
+          };
+        }
+        return item;
+      });
       if (operation) {
         if (!operation.width) {
           operation.width = 140;
